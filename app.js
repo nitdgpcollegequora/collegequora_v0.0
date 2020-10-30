@@ -37,6 +37,10 @@ app.get('/question',(req,res)=>{
     res.render('question');
 });
 
+app.get('/about',(req,res)=>{
+    res.render('about');
+});
+
 app.post('/question',(req,res)=>{
     let Data = new data();
     Data.name = req.body.subjectcode;
