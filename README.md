@@ -1,5 +1,5 @@
 # college Quora
-## a project by students of NIT Durgapur
+## A project by students of NIT Durgapur
 
 #### This project is made using :
 
