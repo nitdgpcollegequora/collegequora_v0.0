@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>College Quora</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .subject{
+            width: 30%;
+        }
+        textarea{
+            width: 70%;
+            height: 50vh;
+        }
+        @media screen and (max-width:546px){
+            .subject{
+                width: 95%;
+            }
+        }
+        @media screen and (max-width:1000px){
+            textarea{
+                width: 99%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container-md container-fluid mt-4">
+        <form method="POST" action="./question">
+        <div class="form-group">
+            <label class="font-weight-bold">Subject code</label>
+            <input type="text" class="form-control mb-3 subject" name="subjectcode" placeholder="eg : csc401 or type 'tech' for other">
+            <div><textarea class="font-weight-bold mb-3" placeholder="start typing" name="problem"></textarea></div>
+            <div>
+            <label for="media" class="mr-2 font-weight-bold">Select image:</label>
+            <input type="file" id="img" name="media" accept="image/*">
+            </div>
+            <button class="btn btn-primary font-weight-bold mt-2" type="submit">Submit</button>
+        </div>
+        </form>
+    </div>
+</body>
+</html>
