@@ -14,7 +14,7 @@ mongoose.connect('mongodb://localhost/test',{ useNewUrlParser: true,useUnifiedTo
 let db = mongoose.connection;
 
 db.once('open',function(){
-    console.log('connected');
+    console.log('database connected');
 });
 
 db.on('error',function(err){
