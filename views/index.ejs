@@ -1,93 +1,153 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>College Quora</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <style>
-        #navitem{
-            background-color: transparent;
-        }
-        #navlinkitem{
-            text-decoration: none;
-            color: white;
-            font-weight: bold;
-            font-size: larger;
-        }
-        .fa-globe{
-            font-size: xx-large;
-        }
-        .headr{
-            width: 100%;
-            position: sticky;
-            top: 0;
-            z-index: 1;
-        }
-        .tag{
-            background-color: rgb(214, 213, 213);
-            border-radius: 5px;
-        }
-        .footr{
-            background-color: rgb(50, 107, 24);
-        }
-    </style>
-</head>
-<body>
 
-    <!-- navber -->
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>College Quora</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        <style>
+            #navitem {
+                background-color: transparent;
+            }
 
-    <div class="navbar  container-fluid flex-xl-row flex-column bg-warning headr">
-        <div class="logo ml-md-3">
-            <a href="#" style="text-decoration: none;color: white;"><i class="fa fa-globe navbar-brand"></i></a>
-        </div>
-        <div>
-            <ul class="list-group flex-md-row flex-column" style="background-color: transparent;">
-                <li class="list-group-item border-0" id="navitem"><div class="input-group"><input type="text" class="form-control" placeholder="type something"><div class="input-group-append"><span class="input-group-text btn btn-primary font-weight-bold"><i class="fa fa-search"></i></span></div></div></li>
-                <li class="list-group-item border-0 text-center" id="navitem"><a href="/login" id="navlinkitem">Login / Register</a></li>
-                <li class="list-group-item border-0 text-center" id="navitem"><a href="/question" id="navlinkitem">Write a Question</a></li>
-                <li class="list-group-item border-0 text-center" id="navitem"><a href="/about" id="navlinkitem">About Us</a></li>
-                <li class="list-group-item border-0 text-center" id="navitem"><a href="#" id="navlinkitem">Contact Us</a></li>
-            </ul>
-        </div>
-    </div>
+            #navlinkitem {
+                text-decoration: none;
+                color: white;
+                font-weight: bold;
+                font-size: 20px;
+            }
 
-    <!-- body -->
+            .fa-globe {
+                font-size: xx-large;
+            }
+            .links{
+              height: auto;
+            }
+            .headr {
+                width: 100%;
+                position: sticky;
+                top: 0;
+                z-index: 1;
+            }
 
-    <div class="container-md container-fluid">
-        <% datas.reverse(); %>
-        <% datas.forEach(function(dt){ %>
-        <div class="card my-3 shadow-lg p-md-3 bodyitem w-100">
-            <div class="card-header d-flex flex-xl-row flex-column justify-content-start align-items-center border-0" style="background-color: rgb(151, 83, 89);color: white;font-weight: bold;">
-                <div style="width: 90%;"><%= dt.content %></div>
+            .tag {
+                background-color: rgb(214, 213, 213);
+                border-radius: 5px;
+            }
+
+            .footr {
+                background-color: rgb(50, 107, 24);
+            }
+            #hammenu{
+              display: none;
+              cursor: pointer;
+            }
+            .cont{
+              width: 75%;
+            }
+            @media screen and (max-width:768px) {
+              .showlinks{
+                display:none;
+                /* height: 100px; */
+              }
+              #hammenu{
+                display: block;
+              }
+              .cont{
+                width: 100%;
+              }
+            }
+        </style>
+    </head>
+
+    <body>
+
+        <!-- navber -->
+
+        <div class="navbar  container-fluid flex-xl-row flex-column bg-warning headr">
+            <div class="logo ml-md-3">
+                <a href="#" style="text-decoration: none;color: white;"><i class="fa fa-globe navbar-brand"></i></a>
             </div>
-            <div class="card-body border-0" style="background-color: transparent;">
-                <ul class="tags list-group flex-sm-row flex-column">
-                    <li class="list-group-item border-0 tag mr-md-2 mb-2"><a href="#" style="text-decoration: none;color: black;"><%=dt.name%></a></li>
+            <div class="position-absolute btn" id="hammenu" style="right:30px;font-size:30px;color:white;">
+              <i class="fa fa-bars"></i>
+            </div>
+            <div class="links showlinks">
+                <ul class="list-group flex-md-row flex-column" style="background-color: transparent;">
+                    <li class="list-group-item border-0" id="navitem">
+                        <div class="input-group"><input type="text" class="form-control" placeholder="type something">
+                            <div class="input-group-append"><span
+                                    class="input-group-text btn btn-primary font-weight-bold"><i
+                                        class="fa fa-search"></i></span></div>
+                        </div>
+                    </li>
+                    <li class="list-group-item border-0 text-center" id="navitem"><a href="/login"
+                            id="navlinkitem">Login / Register</a></li>
+                    <li class="list-group-item border-0 text-center" id="navitem"><a href="/question"
+                            id="navlinkitem">Write a Question</a></li>
+                    <li class="list-group-item border-0 text-center" id="navitem"><a href="/about"
+                            id="navlinkitem">About Us</a></li>
+                    <li class="list-group-item border-0 text-center" id="navitem"><a href="/contact"
+                            id="navlinkitem">Contact Us</a></li>
                 </ul>
             </div>
-            <div class="card-footer border-0" style="background-color: transparent;">
-                <div class="btn btn-primary font-weight-bold">Write Answer</div>
+        </div>
+
+        <!-- body -->
+
+        <div class="container-md container-fluid cont">
+            <% datas.reverse(); %>
+            <% datas.forEach(function(dt){ %>
+            <div class="card my-3 shadow-lg p-md-3 bodyitem w-100">
+                <div class="card-header d-flex flex-xl-row flex-column justify-content-start align-items-center border-0"
+                    style="background-color: rgb(151, 83, 89);color: white;font-weight: bold;">
+                    <div style="width: 90%;"><%= dt.content %></div>
+                </div>
+                <div class="card-body border-0" style="background-color: transparent;">
+                    <ul class="tags list-group flex-sm-row flex-column">
+                        <li class="list-group-item border-0 tag mr-md-2 mb-2"><a href="#"
+                                style="text-decoration: none;color: black;"><%=dt.name%></a></li>
+                    </ul>
+                </div>
+                <div class="card-footer border-0" style="background-color: transparent;">
+                    <div class="btn btn-primary font-weight-bold">Write Answer</div>
+                </div>
+            </div>
+            <% }); %>
+        </div>
+
+        <!-- footer -->
+
+        <div
+            class="footr container-md container-fluid d-flex flex-md-row flex-column justify-content-around align-items-center">
+            <div class="my-3">
+                <ul class="list-group flex-md-row flex-column" style="background-color: transparent;">
+                    <li class="list-group-item border-0 text-center" id="navitem"><a href="/login"
+                            id="navlinkitem">Login / Register</a></li>
+                    <li class="list-group-item border-0 text-center" id="navitem"><a href="/question"
+                            id="navlinkitem">Write a Question</a></li>
+                    <li class="list-group-item border-0 text-center" id="navitem"><a href="/about"
+                            id="navlinkitem">About
+                            Us</a></li>
+                    <li class="list-group-item border-0 text-center" id="navitem"><a href="/contact"
+                            id="navlinkitem">Contact
+                            Us</a></li>
+                </ul>
             </div>
         </div>
-        <% }); %>            
-    </div>
-
-    <!-- footer -->
-
-    <div class="footr container-md container-fluid d-flex flex-md-row flex-column justify-content-around align-items-center">
-        <div class="my-3">
-            <ul class="list-group flex-md-row flex-column" style="background-color: transparent;">
-                <li class="list-group-item border-0 text-center" id="navitem"><a href="/login" id="navlinkitem">Login / Register</a></li>
-                <li class="list-group-item border-0 text-center" id="navitem"><a href="/question" id="navlinkitem">Write a Question</a></li>
-                <li class="list-group-item border-0 text-center" id="navitem"><a href="#" id="navlinkitem">About Us</a></li>
-                <li class="list-group-item border-0 text-center" id="navitem"><a href="#" id="navlinkitem">Contact Us</a></li>
-            </ul>
+        <div class="copyrights container-md container-fluid mt-3 bg-primary text-center">
+            <span><i class="fa fa-copyright mr-2 text-white font-weight-bold"></i><span
+                    class="text-white font-weight-bold">College Quora National Institute of Technology 2020
+                </span></span>
         </div>
-    </div>
-    <div class="copyrights container-md container-fluid mt-3 bg-primary text-center">
-        <span><i class="fa fa-copyright mr-2 text-white font-weight-bold"></i><span class="text-white font-weight-bold">College Quora National Institute of Technology 2020 </span></span>
-    </div>
-</body>
+        <script type="text/javascript">
+          let hammenu = document.getElementById('hammenu');
+          let links = document.querySelector('.links');
+          hammenu.addEventListener('click',function(){
+            links.classList.toggle('showlinks');
+          });
+        </script>
+    </body>
+
 </html>
