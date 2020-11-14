@@ -16,13 +16,15 @@
                 text-decoration: none;
                 color: white;
                 font-weight: bold;
-                font-size: larger;
+                font-size: 20px;
             }
 
             .fa-globe {
                 font-size: xx-large;
             }
-
+            .links{
+              height: auto;
+            }
             .headr {
                 width: 100%;
                 position: sticky;
@@ -34,9 +36,28 @@
                 background-color: rgb(214, 213, 213);
                 border-radius: 5px;
             }
-            
+
             .footr {
                 background-color: rgb(50, 107, 24);
+            }
+            #hammenu{
+              display: none;
+              cursor: pointer;
+            }
+            .cont{
+              width: 75%;
+            }
+            @media screen and (max-width:768px) {
+              .showlinks{
+                display:none;
+                /* height: 100px; */
+              }
+              #hammenu{
+                display: block;
+              }
+              .cont{
+                width: 100%;
+              }
             }
         </style>
     </head>
@@ -49,7 +70,10 @@
             <div class="logo ml-md-3">
                 <a href="#" style="text-decoration: none;color: white;"><i class="fa fa-globe navbar-brand"></i></a>
             </div>
-            <div>
+            <div class="position-absolute btn" id="hammenu" style="right:30px;font-size:30px;color:white;">
+              <i class="fa fa-bars"></i>
+            </div>
+            <div class="links showlinks">
                 <ul class="list-group flex-md-row flex-column" style="background-color: transparent;">
                     <li class="list-group-item border-0" id="navitem">
                         <div class="input-group"><input type="text" class="form-control" placeholder="type something">
@@ -72,7 +96,7 @@
 
         <!-- body -->
 
-        <div class="container-md container-fluid">
+        <div class="container-md container-fluid cont">
             <% datas.reverse(); %>
             <% datas.forEach(function(dt){ %>
             <div class="card my-3 shadow-lg p-md-3 bodyitem w-100">
@@ -117,6 +141,13 @@
                     class="text-white font-weight-bold">College Quora National Institute of Technology 2020
                 </span></span>
         </div>
+        <script type="text/javascript">
+          let hammenu = document.getElementById('hammenu');
+          let links = document.querySelector('.links');
+          hammenu.addEventListener('click',function(){
+            links.classList.toggle('showlinks');
+          });
+        </script>
     </body>
 
 </html>
