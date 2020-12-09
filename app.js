@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const nodemailer = require('nodemailer');
+const url = require('url');
 const app = express();
 app.set('view engine', 'ejs');
 
@@ -72,6 +73,40 @@ app.get('/register', (req, res) => {
 app.get('/forgotpassword', (req, res) => {
     res.render('forgotpassword');
 });
+
+app.get('/edit_question/:id' , (req , res)=>{
+    let id = req.params.id;
+    data.findOne({_id:id} , (err , datas)=>{
+        if(err)
+        console.log(err);
+        else{
+            res.render('edit_question.ejs' , { data:datas});
+        }
+    });
+});
+
+app.post('/edit_question/:id' , (req , res)=>{
+    let id = req.params.id;
+    let subjectcode =req.body.subjectcode;
+    let problem = req.body.problem;
+
+        let Data = new data;
+        Data = {
+            name : subjectcode.trim() , 
+            content : problem.trim()
+        };
+
+        data.updateOne({_id:id} , Data , (err)=>{
+            if(err)
+            console.log(err);
+            else{
+                res.redirect('/');
+            }
+        }) 
+
+    
+})
+
 
 app.listen('3000', (err) => {
     if (err)
