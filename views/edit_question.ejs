@@ -26,6 +26,9 @@
     </style>
 
     <script>
+        setInterval(validate_code, 500);
+        setInterval(validate_prob, 500);
+    
         function validate(){
             let subjectcode = document.getElementById("subjectcode").value;
             let problem = document.getElementById("problem").value;
@@ -79,13 +82,13 @@
                     <div class="form-group">
                         <div class = "" id="code">
                             <label class="font-weight-bold" for="subjectcode">Subject code : </label>
-                            <input  onchange="validate_code();" type="text" class="form-control  mb-3 subject" id="subjectcode" name="subjectcode" value="<%=data.name %>">
+                            <input  type="text" class="form-control  mb-3 subject" id="subjectcode" name="subjectcode" value="<%=data.name %>">
                             <p id="subcode" style="display: none;">*subjectcode cannot be empty</p>
                         </div>                            
                         <br>
                         <div class="" id="prob">
                             <label for="problem">Enter Question : </label>
-                            <textarea  onchange="validate_prob();" class="font-weight-bold mb-3 form-control " id="problem" name="problem" style="height: 250px;"  > <%=data.content %></textarea>
+                            <textarea  class="font-weight-bold mb-3 form-control " id="problem" name="problem" style="height: 250px;"  > <%=data.content %></textarea>
                             <p id="Question" style="display: none;">*problem cannot be empty</p>
                         </div>
                         <div>
