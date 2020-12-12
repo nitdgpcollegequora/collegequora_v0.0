@@ -65,8 +65,16 @@ app.get('/login', (req, res) => {
     res.render('login');
 });
 
+// you ask for the register page
 app.get('/register', (req, res) => {
     res.render('register');
+});
+
+// when user enters a email and password for a new account 
+app.post('/register', (req, res) =>{
+    let email = req.params.email;
+    let pwd = req.params.pwd;
+    
 });
 
 app.get('/forgotpassword', (req, res) => {
