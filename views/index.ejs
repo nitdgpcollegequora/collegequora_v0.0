@@ -103,15 +103,18 @@
                 <div class="card-header d-flex flex-xl-row flex-column justify-content-start align-items-center border-0"
                     style="background-color: rgb(151, 83, 89);color: white;font-weight: bold;">
                     <div style="width: 90%;"><%= dt.content %></div>
-                </div>
+                                    </div>
                 <div class="card-body border-0" style="background-color: transparent;">
                     <ul class="tags list-group flex-sm-row flex-column">
                         <li class="list-group-item border-0 tag mr-md-2 mb-2"><a href="#"
                                 style="text-decoration: none;color: black;"><%=dt.name%></a></li>
                     </ul>
+                    <a class=" float-right btn btn-primary " href="/edit_question/<%= dt._id %>"> <i class="fa fa-pencil mt-1" style="font-size: 24px; color: white"></i> </a>
+
                 </div>
-                <div class="card-footer border-0" style="background-color: transparent;">
+                <div class="card-footer border-0" >
                     <div class="btn btn-primary font-weight-bold">Write Answer</div>
+                    
                 </div>
             </div>
             <% }); %>
@@ -138,7 +141,7 @@
         </div>
         <div class="copyrights container-md container-fluid mt-3 bg-primary text-center">
             <span><i class="fa fa-copyright mr-2 text-white font-weight-bold"></i><span
-                    class="text-white font-weight-bold">College Quora National Institute of Technology 2020
+                    class="text-white font-weight-bold">College Quora , National Institute of Technology , Durgapur 2020
                 </span></span>
         </div>
         <script type="text/javascript">

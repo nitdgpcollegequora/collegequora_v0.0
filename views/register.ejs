@@ -27,12 +27,26 @@
             </div>
             <form method="POST" action="/register" class="m-auto" id="regform">
                 <div class="form-group">
+
+                    <label for="username" class="font-weight-bold">Enter a Username</label>
+                    <input type="text" class="form-control" name="username" placeholder="Username">
+                    <!-- <% if(messages.length >= 1){ %>
+                        <div class="alert alert-danger" role="alert"><%= messages[0].message %></div>
+                    <% } %> -->
+                </div>
+                <div class="form-group">
                     <label for="email" class="font-weight-bold">E-Mail</label>
                     <input type="email" class="form-control" name="email" placeholder="Email">
+                    <!-- <% if(messages.length >= 2 && messages[1].fail){ %>
+                        <div class="alert alert-danger" role="alert"><%= messages[1].message %></div>
+                    <% } %> -->
                 </div>
                 <div class="form-group">
                     <label for="password" class="font-weight-bold"> Set Password</label>
                     <input type="password" class="form-control" name="password" placeholder="password">
+                    <!-- <% if(messages.length >= 3 && messages[2].fail){ %>
+                        <div class="alert alert-danger" role="alert"><%= messages[2].message %></div>
+                    <% } %> -->
                 </div>
                 <div class="form-group">
                     <button type="submit" class="mb-3 btn btn-primary font-weight-bold">
