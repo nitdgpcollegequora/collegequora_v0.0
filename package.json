@@ -1,11 +1,10 @@
 {
   "name": "collegequora_v0.0",
   "version": "1.0.0",
-  "description": "",
+  "description": "* Frontend :\r   * HTML5   \r   * CSS5\r   * Bootstrap",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js",
-    "devstart": "nodemon app.js"
+    "start": "node app"
   },
   "repository": {
     "type": "git",
@@ -22,9 +21,8 @@
     "body-parser": "^1.19.0",
     "ejs": "^3.1.5",
     "express": "^4.17.1",
-
-  },
-  "devDependencies": {
-    "nodemon": "^2.0.6"
+    "mongoose": "^5.11.8",
+    "nodemailer": "^6.4.17",
+    "random": "^2.2.0"
   }
 }
