@@ -2,7 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const nodemailer = require('nodemailer');
-
+const random = require('random');
 const app = express();
 app.set('view engine', 'ejs');
 
@@ -212,7 +212,7 @@ app.post('/forgotpassword', (req, res) => {
             res.render('otp');
         }
     });
-    
+
 });
 
 // when user gives our otp
@@ -252,7 +252,7 @@ app.post('/edit_question/:id' , (req , res)=>{
 
         let Data = new data;
         Data = {
-            name : subjectcode.trim() , 
+            name : subjectcode.trim() ,
             content : problem.trim()
         };
 
@@ -262,9 +262,9 @@ app.post('/edit_question/:id' , (req , res)=>{
             else{
                 res.redirect('/');
             }
-        }) 
+        })
 
-    
+
 })
 
 
