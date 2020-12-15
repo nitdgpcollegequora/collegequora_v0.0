@@ -69,6 +69,36 @@ app.get('/login', (req, res) => {
     res.render('login');
 });
 
+app.post('/login', (req, res) => {
+    let username = req.body.username;
+    let password = req.body.password;
+    Account.findOne({username:username},(err,accounts)=>{
+      if(err)
+      console.log(err);
+      else{
+        if(accounts)
+        {
+          Account.findOne({password:password},(err,accounts)=>{
+            if(err)
+            console.log(err);
+            else{
+              if(accounts)
+              {
+                res.redirect('/');
+              }
+              else {
+                res.redirect('/login');
+              }
+            }
+          })
+        }
+        else {
+          res.redirect('/login');
+        }
+      }
+    })
+});
+
 // you ask for the register page
 app.get('/register', (req, res) => {
     messages = [];
@@ -76,100 +106,61 @@ app.get('/register', (req, res) => {
 
 });
 
-// when user enters a email and password for a new account 
+// when user enters a email and password for a new account
 app.post('/register', (req, res) =>{
-    let messages = [];
-    let email = req.body.email;
-    let password = req.body.password;
-    let username = req.body.username;
-
-    //let check = 0; // no errors at first.
-    //console.log(email, '1234');
-    //console.log(username);
-
-    // The way the code is written in this way is due to the asynchronous running of code whihc leads to 
-    // incorrect results. This code will be changed when we know a better way to write this code.
-    if(username.length == 0) {  // invalid username.
-        check = 1;
-        messages.push({fail: 1, message: 'Add a valid username.'});
-        res.render('register', {messages: messages});
-    } else { // check if username is already linked to a account.
-        Account.find({username: username}, (err, accounts) => {
-            if(err){ console.log(err); console.log('HI1');}
-            else if(!accounts) { // valid username
-                messages.push({fail: 0, message: 'Valid username.'});
-                console.log('HI2');
-
-                if(email.length == 0) { // invalid email.
-                    check = 1;
-                    messages.push({fail: 1, message: 'Add a valid email id'});
-                    res.render('register', {messages: messages});
-
-                } else {  // check if an account is present with this email or not
-                    Account.find({email: email}, (err, accounts) => {
-                        if(err){console.log(err);  console.log('HI1');}
-                        else if(!accounts) { // valid email
-                            console.log('HI2');
-                            messages.push({fail: 0, message: 'Valid email'});
-                            if(password.length == 0) { // invalid password
-                                check = 1;
-                                console.log('HI1');
-                                messages.push({fail: 1, message: 'Add a password.'});
-                            } else {
-                                console.log('HI2');
-                                messages.push({fail: 0, message: 'Valid password.'});
-
-                                messages.push({fail: 0, message: 'Account added successfully'});
-                                console.log(messages);
-                                res.redirect('/login');
-                            }
-                        }
+    let account = new Account();
+    account.username = req.body.username;
+    account.email = req.body.email;
+    account.password = req.body.password;
+    if(account.email.length)
+    {
+      Account.findOne({email:account.email},(err,accounts)=>{
+        if(err)
+        console.log(err);
+        else {
+          if(accounts)
+          {
+            res.redirect('/register');
+          }
+          else {
+            if(account.username.length)
+            {
+              Account.findOne({username:account.username},(err,accounts)=>{
+                if(err)
+                console.log(err);
+                else {
+                  if(accounts)
+                  {
+                    res.redirect('/register');
+                  }
+                  else {
+                    if(account.password.length)
+                    {
+                      account.save(err=>{
+                        if(err)
+                        console.log(err);
                         else {
-                            check = 1;
-                            console.log('HI3');
-                            messages.push({fail: 1, message: 'This email is already linked to a account.'});
-                            res.render('register', {messages: messages});
-                            //console.log(messages);
+                          res.redirect('/login');
                         }
-                    });
+                      })
+                    }
+                    else {
+                      res.redirect('/register');
+                    }
+                  }
                 }
+              })
             }
             else {
-                //check = 1;
-                //console.log(check);
-                console.log('HI3');
-                messages.push({fail: 1, message: 'This username is already linked to a account.'});
-                res.render('register', {messages: messages});
-                //console.log(messages);
-
-                
+              res.redirect('/register');
             }
-        });
+          }
+        }
+      })
     }
-
-    //  This is the part of the code that gave incorrect results.
-    //console.log(check);
-    // if (check === 0) { // all credentials are correct.
-    //     //console.log(messages);
-    //     let account = new Account();
-    //     account.username = username;
-    //     account.email = email;
-    //     account.password = password;
-    //     account.save((err) => {
-    //         if (err) console.log(err);
-    //         else {
-    //             messages.push({fail: 0, message: 'Account added successfully'});
-    //             console.log(messages);
-    //             res.redirect('/login');
-    //         }
-    //     });
-    // } else { // invalid credentials.
-    //     messages.push({fail: 1, message: 'Cannot create an account with given credentials.'});
-    //     //res.render('./register', {messages: messages});
-    //     console.log(messages);
-    //     res.render('register');
-    // }
-
+    else {
+      res.redirect('/register');
+    }
 });
 
 app.get('/forgotpassword', (req, res) => {
