@@ -11,6 +11,9 @@ let accountschema = mongoose.Schema({
     },
     password:{
         type:String
+    },
+    otp:{
+        type:Number
     }
 });
 

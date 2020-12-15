@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const nodemailer = require('nodemailer');
 const random = require('random');
+
 const app = express();
 app.set('view engine', 'ejs');
 
@@ -10,13 +11,13 @@ app.use(bodyParser.urlencoded({ extended: false }))
 
 // parse application/json
 app.use(bodyParser.json())
+// importing account and data schema
+const Account = require('./models/account');
+const data = require('./models/data');
 
 // storing all data to a local database test.
 mongoose.connect('mongodb://localhost/test', { useNewUrlParser: true, useUnifiedTopology: true });
 let db = mongoose.connection;
-// importing account and data schema
-const Account = require('./models/account');
-const data = require('./models/data');
 
 
 db.once('open', function () {
@@ -32,7 +33,7 @@ app.get('/', (req, res) => {
         if (err)
             console.log(err);
         else {
-            res.render('index', { datas: datas });
+            res.render('index', {datas: datas});
         }
     })
 });
@@ -164,36 +165,74 @@ app.post('/register', (req, res) =>{
 });
 
 app.get('/forgotpassword', (req, res) => {
-    res.render('forgotpassword');
+    messages = [];
+    res.render('forgotpassword', {messages: messages});
 });
 
 app.post('/forgotpassword', (req, res) => {
-    let otp = random.int(min = 1000, max = 9999);
-    console.log('HI1');
-    var transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-        user: 'noobgalaxy6@gmail.com',
-        pass: 'Asxz@1234.'
-        }
-    });
-    console.log('HI2');
-    var mailOptions = {
-        from: 'noobgalaxy6@gmail.com',
-        to: req.body.email,
-        subject: 'Sending Email using Node.js',
-        text: `${otp}`
-    };
-    console.log('HI3');
-    transporter.sendMail(mailOptions, function(error, info){
-        if (error) {
-            console.log(error);
+
+    let email = req.body.email;
+    if(email.length === 0) {
+        messages = [];
+            messages.push({fail: 1, message: 'Enter a valid email id.'});
+            return res.render('forgotpassword', {messages: messages});
+    }
+    Account.find({email: email}, (err, accounts) => {
+        if(!accounts){
+            console.log('There exist no account with this email id');
+            //res.redirect('register');
+            messages = [];
+            messages.push({fail: 1, message: 'There is no email with this email id.'});
+            return res.render('forgotpassword', {messages: messages});
         } else {
-            console.log('Email sent: ' + info.response);
+            let otp = random.int(min = 1000, max = 9999);
+            //console.log('HI1');
+            var transporter = nodemailer.createTransport({
+                service: 'gmail',
+                auth: {
+                user: 'noobgalaxy6@gmail.com',
+                pass: 'Asxz@1234.'
+                }
+            });
+            //console.log('HI2');
+            var mailOptions = {
+                from: 'noobgalaxy6@gmail.com',
+                to: email,
+                subject: 'Sending Email using Node.js',
+                text: `Your otp for password change of nitdgp quora account is: ${otp}`
+            };
+            //console.log('HI3');
+            transporter.sendMail(mailOptions, function(error, info){
+                if (error) {
+                    console.log(error);
+                } else {
+                    console.log('Email sent: ' + info.response);
+                }
+            });
+            accounts.otp = otp;
+            res.render('otp');
         }
     });
-    console.log('HI4');
-    res.redirect('login');
+    
+});
+
+// when user gives our otp
+app.post('/otp', (req, res) => {
+    let otp = req.body.otp;
+    let password = req.body.password;
+    Account.find({otp: otp}, (err, accounts) => {
+        if (err) {
+            console.log(err);
+        } else if (!accounts) {
+            console.log('Enter a valid otp');
+            res.render('otp');
+        } else {
+            console.log('Valid otp entered');
+            accounts.password = password;
+            accounts.otp = 0;
+            res.redirect('login');
+        }
+    });
 });
 
 app.listen('3000', (err) => {
