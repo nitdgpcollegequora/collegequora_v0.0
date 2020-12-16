@@ -104,13 +104,16 @@
                     style="background-color: rgb(151, 83, 89);color: white;font-weight: bold;">
                     <div style="width: 90%;"><%= dt.content %></div>
                                     </div>
-                <div class="card-body border-0" style="background-color: transparent;">
+                <div class="card-body border-0 d-flex flex-row justify-content-between align-items-center">
                     <ul class="tags list-group flex-sm-row flex-column">
                         <li class="list-group-item border-0 tag mr-md-2 mb-2"><a href="#"
                                 style="text-decoration: none;color: black;"><%=dt.name%></a></li>
                     </ul>
-                    <a class=" float-right btn btn-primary " href="/edit_question/<%= dt._id %>"> <i class="fa fa-pencil mt-1" style="font-size: 24px; color: white"></i> </a>
-                    <a class=" float-right btn btn-primary " href="/delete_question/<%= dt._id %>"> <i class="fa fa-trash mt-1" style="font-size: 24px; color: white"></i> </a>
+                    <ul class="list-group flex-row">
+                      <a class=" btn  list-group-item mr-1 border-0" href="/edit_question/<%= dt._id %>"> <i class="fa fa-pencil mt-1" style="font-size: 24px; color:blue"></i> </a>
+                      <a class=" btn  list-group-item border-0" href="/delete_question/<%= dt._id %>"> <i class="fa fa-trash mt-1" style="font-size: 24px; color:red"></i> </a>
+                    </ul>
+
                 </div>
                 <div class="card-footer border-0" >
                     <div class="btn btn-primary font-weight-bold">Write Answer</div>
