@@ -110,11 +110,11 @@
                                 style="text-decoration: none;color: black;"><%=dt.name%></a></li>
                     </ul>
                     <a class=" float-right btn btn-primary " href="/edit_question/<%= dt._id %>"> <i class="fa fa-pencil mt-1" style="font-size: 24px; color: white"></i> </a>
-
+                    <a class=" float-right btn btn-primary " href="/delete_question/<%= dt._id %>"> <i class="fa fa-trash mt-1" style="font-size: 24px; color: white"></i> </a>
                 </div>
                 <div class="card-footer border-0" >
                     <div class="btn btn-primary font-weight-bold">Write Answer</div>
-                    
+
                 </div>
             </div>
             <% }); %>
