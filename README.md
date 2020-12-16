@@ -1,4 +1,4 @@
-# college Quora
+# College Quora
 ## A project by students of NIT Durgapur
 
 #### This project is made using :
@@ -20,7 +20,7 @@
 
 ## To install dependencies use the followimg commands :
 
-> npm install express mongoose ejs body-parser 
+> npm install express mongoose ejs body-parser node-mailer random
 
 ## command to run the app
 
