@@ -263,10 +263,18 @@ app.post('/edit_question/:id' , (req , res)=>{
                 res.redirect('/');
             }
         })
-
-
 })
 
+app.get('/delete_question/:id', (req , res)=>{
+  let id = req.params.id;
+  data.deleteOne({_id:id},(err)=>{
+    if(err)
+    console.log(err);
+    else{
+      res.redirect('/');
+    }
+  });
+});
 
 app.listen('3000', (err) => {
     if (err)
