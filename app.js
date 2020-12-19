@@ -32,8 +32,7 @@ app.get('/',(req,res)=>{
         }
     })
 });
-
-app.get('/question',(req,res)=>{
+app.get('/question',(_req,res)=>{
     res.render('question');
 });
 
@@ -54,6 +53,7 @@ app.post('/question',(req,res)=>{
         }
     })
 });
+
 
 app.get('/login',(req,res)=>{
     res.render('login');
