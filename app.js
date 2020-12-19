@@ -36,12 +36,8 @@ app.get('/', (req, res) => {
         }
     })
 });
-<<<<<<< HEAD
-app.get('/question',(_req,res)=>{
-=======
 
 app.get('/question', (req, res) => {
->>>>>>> 653ed4dd27c4599a8ce4fe1cef069dd082078c03
     res.render('question');
 });
 
@@ -69,12 +65,7 @@ app.post('/question', (req, res) => {
     })
 });
 
-<<<<<<< HEAD
-
-app.get('/login',(req,res)=>{
-=======
 app.get('/login', (req, res) => {
->>>>>>> 653ed4dd27c4599a8ce4fe1cef069dd082078c03
     res.render('login');
 });
 
@@ -289,10 +280,5 @@ app.listen('3000', (err) => {
     if (err)
         console.log(err);
     else
-<<<<<<< HEAD
-    console.log('app listening')
-}) ;
-=======
         console.log(`app listening at 3000`);
 });
->>>>>>> 653ed4dd27c4599a8ce4fe1cef069dd082078c03
