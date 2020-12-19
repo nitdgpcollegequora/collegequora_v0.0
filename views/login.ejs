@@ -1,51 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>College Quora</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-    <style>
-        #loginform{
-            width: 50%;
-        }
-        @media screen and (max-width:768px)
-        {
-            #loginform{
-                width: 100%;
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>College Quora</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+        <style>
+            #loginform {
+                width: 50%;
             }
-            #email,#password{
-                width: 95%;
+
+            @media screen and (max-width:768px) {
+                #loginform {
+                    width: 100%;
+                }
+
+                #username,
+                #password {
+                    width: 95%;
+                }
+
+                #forgot,
+                #reg {
+                    font-size: smaller;
+                }
             }
-            #forgot,#reg{
-                font-size: smaller;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="container-md conatiner-fluid border border-primary">
-        <div class="w-100 text-center mt-3"><h2 class="font-weight-bold">Login</h2></div>
-    <form method="POST" action="/login" class="m-auto" id="loginform">
-        <div class="form-group">
-            <label for="email" class="font-weight-bold">E-Mail</label>
-            <input type="email" class="form-control" id="email" name="email" placeholder="Email">
+        </style>
+    </head>
+
+    <body>
+        <div class="container-md conatiner-fluid">
+            <div class="w-100 text-center mt-3">
+                <h2 class="font-weight-bold">Login</h2>
+            </div>
+            <form method="POST" action="/login" class="m-auto" id="loginform">
+                <div class="form-group">
+                    <label for="username" class="font-weight-bold">Username</label>
+                    <input type="text" class="form-control" id="username" name="username" placeholder="Username">
+                </div>
+                <div class="form-group">
+                    <label for="password" class="font-weight-bold">Password</label>
+                    <input type="password" class="form-control" id="password" name="password" placeholder="password">
+                </div>
+                <div class="form-group form-check">
+                    <input type="checkbox" class="form-check-input" name="checkbox">
+                    <label for="remember" class="font-weight-bold">remember me</label>
+                    <a href="/forgotpassword" style="text-decoration: none; float: right;" id="forgot">Forgot Password
+                        ?</a>
+                    <a href="/register" style="text-decoration: none; float: right;" class="mr-2" id="reg">Register </a>
+                </div>
+                <button type="submit" class="my-3 btn btn-primary font-weight-bold">
+                    Login
+                </button>
+            </form>
         </div>
-        <div class="form-group">
-            <label for="password" class="font-weight-bold">Password</label>
-            <input type="password" class="form-control" id="password" name="password" placeholder="password">
-        </div>
-        <div class="form-group form-check">
-            <input type="checkbox" class="form-check-input" name="checkbox">
-            <label for="remember" class="font-weight-bold">remember me</label>
-            <a href="/forgotpassword" style="text-decoration: none; float: right;" id="forgot">Forgot Password ?</a>
-            <a href="/register" style="text-decoration: none; float: right;" class="mr-2" id="reg">Register </a>
-        </div>
-        <button type="submit" class="my-3 btn btn-primary font-weight-bold">
-            Login
-        </button>
-    </form>
-    </div>
-</body>
+    </body>
+
 </html>

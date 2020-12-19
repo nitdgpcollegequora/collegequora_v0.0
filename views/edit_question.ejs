@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>College Quora</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .subject{
+            width: 30%;
+            margin-bottom: 0px;
+
+        }
+        
+        @media screen and (max-width:546px){
+            .subject{
+                width: 95%;
+            }
+        }
+        @media screen and (max-width:1000px){
+            textarea{
+                width: 99%;
+            }
+        }
+    </style>
+
+    <script>
+        setInterval(validate_code, 500);
+        setInterval(validate_prob, 500);
+    
+        function validate(){
+            let subjectcode = document.getElementById("subjectcode").value;
+            let problem = document.getElementById("problem").value;
+
+            
+            if(subjectcode.trim().length == 0 || problem.trim().length == 0)
+            {
+                return false;
+            }
+            return true;
+        }
+        function validate_code(){
+            let subjectcode = document.getElementById("subjectcode").value;
+            if(subjectcode.trim().length == 0 )
+            {
+                document.getElementById("code").className += "alert alert-danger";
+                document.getElementById("subcode").style.display = "block";                
+            }
+            else
+            {
+                document.getElementById("code").className = "";
+                document.getElementById("subcode").style.display = "none";
+            }
+        }
+        
+
+        function validate_prob(){
+            let problem = document.getElementById("problem").value;
+            if(problem.trim().length == 0)
+            {
+                document.getElementById("prob").className += "alert alert-danger";
+                document.getElementById("Question").style.display = "block";
+            }
+            else
+            {
+                document.getElementById("prob").className = "";
+                document.getElementById("Question").style.display = "none";
+            }
+        }
+    </script>
+</head>
+<body class="pl-0">
+    <div class="container-md  mt-4 ">
+        <div class="card border border-primary ">
+            <div class="card-header">
+                <h3>Edit : </h3> 
+            </div>
+            <div class="card-body">
+                <form onsubmit="return validate();" method="POST" action="/edit_question/<%= data._id %>">
+                
+                    <div class="form-group">
+                        <div class = "" id="code">
+                            <label class="font-weight-bold" for="subjectcode">Subject code : </label>
+                            <input  type="text" class="form-control  mb-3 subject" id="subjectcode" name="subjectcode" value="<%=data.name %>">
+                            <p id="subcode" style="display: none;">*subjectcode cannot be empty</p>
+                        </div>                            
+                        <br>
+                        <div class="" id="prob">
+                            <label for="problem">Enter Question : </label>
+                            <textarea  class="font-weight-bold mb-3 form-control " id="problem" name="problem" style="height: 250px;"  > <%=data.content %></textarea>
+                            <p id="Question" style="display: none;">*problem cannot be empty</p>
+                        </div>
+                        <div>
+                            <label for="media" class="mr-2 font-weight-bold">Select image:</label>
+                            <input type="file" id="img" name="media" accept="image/*">
+                        </div>
+                        <br>
+                        <button class="btn btn-primary font-weight-bold mb-2 mt-2" type="submit">Submit</button>
+                    </div>
+                    </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
