@@ -27,11 +27,11 @@ db.on('error', function (err) {
     console.log(err);
 });
 
-app.get('/landing' , (req,res)=>{
-   res.render('landing');
+app.get('/' , (req,res)=>{
+  res.render('landing');
 });
 
-app.get('/', (req, res) => {
+app.get('/index', (req, res) => {
     data.find({}, function (err, datas) {
         if (err)
             console.log(err);
