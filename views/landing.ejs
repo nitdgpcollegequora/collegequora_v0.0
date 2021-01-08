@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>College Quora</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        <style>
+
+            body{
+                background-image: url("https://wallpaperaccess.com/full/662117.jpg");
+                background-size: cover ;
+                background-attachment: fixed;
+                background-repeat: no-repeat;
+            }
+
+            #navitem {
+                background-color: transparent;
+            }
+
+            #navlinkitem {
+                text-decoration: none;
+                color: white;
+                font-weight: bold;
+                font-size: 20px;
+            }
+
+            .fa-globe {
+                font-size: xx-large;
+            }
+            .links{
+              height: auto;
+            }
+            .headr {
+                background-color: #222;
+                width: 100%;
+                position: sticky;
+                top: 0;
+                
+            }
+
+            .clg{
+              font-weight: bold; 
+              font-size: 30px;
+            }
+
+            
+            #hammenu{
+              display: none;
+              cursor: pointer;
+            }
+            .cont{
+              width: 75%;
+            }
+            @media screen and (max-width:768px) {
+              .showlinks{
+                display:none;
+                /* height: 100px; */
+              }
+              #hammenu{
+                display: block;
+              }
+              .cont{
+                width: 100%;
+              }
+
+              .logo{
+                width: 100%;
+                float: left;
+              }
+
+              .clg{
+                font-size: 24px;
+              }
+
+              
+            }
+        </style>
+    </head>
+
+    <body>
+
+        <!-- navber -->
+
+        <div class="navbar  container-fluid flex-md-row justify-content-between flex-column  headr">
+            <div class="logo ml-md-3">
+                <a href="#" style="text-decoration: none;color: white;"><i class="fa fa-globe navbar-brand"></i> <span class="clg">College Quora</span> </a>
+            </div>
+            <div class="position-absolute btn" id="hammenu" style="right:30px;font-size:30px;color:white;">
+              <i class="fa fa-bars"> </i>
+                
+            </div>
+            <div class="links showlinks">
+                <ul class="list-group flex-md-row flex-column" style="background-color: transparent;">
+                    
+                    <li class="list-group-item border-0 text-center" id="navitem"><a href="/login"
+                            id="navlinkitem">Login </a></li>
+                    <li class="list-group-item border-0 text-center" id="navitem"><a href="/register"
+                            id="navlinkitem">Sign Up</a></li>
+                    
+                </ul>
+            </div>
+        </div>
+
+        
+
+        
+        <script type="text/javascript">
+          let hammenu = document.getElementById('hammenu');
+          let links = document.querySelector('.links');
+          hammenu.addEventListener('click',function(){
+            links.classList.toggle('showlinks');
+          });
+        </script>
+    </body>
+
+</html>
