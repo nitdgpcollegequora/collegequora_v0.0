@@ -6,8 +6,11 @@ let dataschema = mongoose.Schema({
     },
     content:{
         type : String
+    },
+    uid:{
+        type : String
     }
-    
+
 });
 
 let data = module.exports = mongoose.model('data',dataschema);

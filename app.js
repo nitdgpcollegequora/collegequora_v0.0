@@ -51,15 +51,32 @@ app.get('/home/:id', (req, res) => {
           if (err)
               console.log(err);
           else {
-              res.render('index', {datas: datas,user:user});
+              res.render('index', {datas: datas,user:user,success:req.flash('success')});
           }
       })
     }
   })
 });
 
-app.get('/question', (req, res) => {
-    res.render('question');
+app.get('/question/:uid', (req, res) => {
+    let uid = req.params.uid;
+    res.render('question',{uid:uid});
+});
+
+app.post('/question/:uid', (req, res) => {
+  let uid = req.params.uid;
+    let Data = new data();
+    Data.uid = uid;
+    Data.name = req.body.subjectcode;
+    Data.content = req.body.problem;
+    Data.save(function (err) {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            res.redirect('/home/'+uid);
+        }
+    })
 });
 
 app.get('/about', (req, res) => {
@@ -72,19 +89,7 @@ app.get('/contact', (req, res) => {
 
 
 
-app.post('/question', (req, res) => {
-    let Data = new data();
-    Data.name = req.body.subjectcode;
-    Data.content = req.body.problem;
-    Data.save(function (err) {
-        if (err) {
-            console.log(err);
-        }
-        else {
-            res.redirect('/');
-        }
-    })
-});
+
 
 app.get('/login', (req, res) => {
     res.render('login');
@@ -255,45 +260,53 @@ app.post('/otp', (req, res) => {
     });
 });
 
-app.get('/edit_question/:id' , (req , res)=>{
-    let id = req.params.id;
-    data.findOne({_id:id} , (err , datas)=>{
+app.get('/edit_question/:qid/:uid' , (req , res)=>{
+    let qid = req.params.qid;
+    let uid = req.params.uid;
+    Account.findOne({_id:uid},(err,user)=>{
       if(err)
-      console.log(err);
-      else{
-          res.render('edit_question.ejs' , { data:datas});
+      console.log(err)
+      else {
+        data.findOne({_id:qid} , (err , datas)=>{
+          if(err)
+          console.log(err);
+          else{
+              res.render('edit_question.ejs' , { data:datas,user:user});
+          }
+      });
       }
-  });
+    })
 });
 
-app.post('/edit_question/:id' , (req , res)=>{
-    let id = req.params.id;
+app.post('/edit_question/:qid/:uid' , (req , res)=>{
+    let qid = req.params.qid;
     let subjectcode =req.body.subjectcode;
     let problem = req.body.problem;
-
+    let uid = req.params.uid;
         let Data = new data;
         Data = {
             name : subjectcode.trim() ,
             content : problem.trim()
         };
 
-        data.updateOne({_id:id} , Data , (err)=>{
+        data.updateOne({_id:qid} , Data , (err)=>{
             if(err)
             console.log(err);
             else{
-                res.redirect('/');
+                res.redirect('/home/'+uid);
             }
         })
 })
 
-app.get('/delete_question/:id', (req , res)=>{
-  let id = req.params.id;
-  data.deleteOne({_id:id},(err)=>{
+app.get('/delete_question/:qid/:uid', (req , res)=>{
+  let qid = req.params.qid;
+  let uid = req.params.uid;
+  data.deleteOne({_id:qid},(err)=>{
     if(err)
     console.log(err);
     else{
       req.flash('success','Deleted sucessfully');
-      res.redirect('/');
+      res.redirect('/home/'+uid);
     }
   });
 });
@@ -322,6 +335,17 @@ app.post('/absent/:id/:index',(req ,res)=>{
   });
 })
 
+app.get('/profile/:id',(req,res)=>{
+  let id = req.params.id;
+  Account.findOne({_id:id},(err,user)=>{
+    if(err)
+    console.log(err)
+    else {
+      res.render('profile',{user:user})
+    }
+  })
+})
+
 app.post('/profile/:id/course',(req,res)=>{
   let coursename = req.body.coursename;
   let id = req.params.id;
@@ -334,6 +358,8 @@ app.post('/profile/:id/course',(req,res)=>{
     }
   });
 })
+
+
 
 app.listen('3000', (err) => {
   if (err)
