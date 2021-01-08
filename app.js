@@ -31,14 +31,21 @@ app.get('/' , (req,res)=>{
   res.render('landing');
 });
 
-app.get('/index', (req, res) => {
-    data.find({}, function (err, datas) {
-        if (err)
-            console.log(err);
-        else {
-            res.render('index', {datas: datas});
-        }
-    })
+app.get('/home/:id', (req, res) => {
+  let id =req.params.id;
+  Account.findOne({_id:id},(err,user)=>{
+    if(err)
+    console.log(err);
+    else {
+      data.find({}, function (err, datas) {
+          if (err)
+              console.log(err);
+          else {
+              res.render('index', {datas: datas,user:user});
+          }
+      })
+    }
+  })
 });
 
 app.get('/question', (req, res) => {
@@ -88,7 +95,7 @@ app.post('/login', (req, res) => {
             else{
               if(accounts)
               {
-                res.redirect('/');
+                res.redirect('/home/'+accounts._id);
               }
               else {
                 res.redirect('/login');
