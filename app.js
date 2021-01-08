@@ -287,6 +287,17 @@ app.get('/delete_question/:id', (req , res)=>{
   });
 });
 
+app.get('/:id',(req,res)=>{
+  let id = req.params.id;
+  Account.findOne({_id:id},(err,user)=>{
+    if(err)
+    console.log(err)
+    else {
+        res.render('profile',{user:user})
+    }
+  })
+})
+
 app.listen('3000', (err) => {
     if (err)
         console.log(err);
