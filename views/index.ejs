@@ -102,6 +102,13 @@
         <!-- body -->
         
         <div class="container-md container-fluid cont">
+            <% if(success.length > 0) { %>
+                <% success.forEach(function(msg){%>
+                    <div class = "alert alert-success">
+                        <%=msg%>
+                    </div>
+                <%})%> 
+            <% } %>
             <% datas.reverse(); %>
             <% datas.forEach(function(dt){ %>
             <div class="card my-3 shadow-lg p-md-3 bodyitem w-100">

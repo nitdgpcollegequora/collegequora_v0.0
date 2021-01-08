@@ -51,7 +51,7 @@ app.get('/home/:id', (req, res) => {
           if (err)
               console.log(err);
           else {
-              res.render('index', {datas: datas,user:user});
+              res.render('index', {datas: datas,user:user,success:req.flash('success')});
           }
       })
     }
