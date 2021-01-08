@@ -6,6 +6,9 @@ let dataschema = mongoose.Schema({
     },
     content:{
         type : String
+    },
+    uid:{
+        type : String
     }
 });
 
