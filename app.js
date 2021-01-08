@@ -3,10 +3,20 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const nodemailer = require('nodemailer');
 const random = require('random');
+const session = require('express-session');
+const flash = require('connect-flash');
 const app = express();
 app.set('view engine', 'ejs');
 
 app.use(bodyParser.urlencoded({ extended: false }))
+
+app.use(session({
+  secret: 'keyboard cat',
+  resave: true,
+  saveUninitialized: true
+}));
+
+app.use(flash());
 
 // parse application/json
 app.use(bodyParser.json())
@@ -237,12 +247,12 @@ app.post('/otp', (req, res) => {
 app.get('/edit_question/:id' , (req , res)=>{
     let id = req.params.id;
     data.findOne({_id:id} , (err , datas)=>{
-        if(err)
-        console.log(err);
-        else{
-            res.render('edit_question.ejs' , { data:datas});
-        }
-    });
+      if(err)
+      console.log(err);
+      else{
+          res.render('edit_question.ejs' , { data:datas});
+      }
+  });
 });
 
 app.post('/edit_question/:id' , (req , res)=>{
@@ -271,13 +281,51 @@ app.get('/delete_question/:id', (req , res)=>{
     if(err)
     console.log(err);
     else{
+      req.flash('success','Deleted sucessfully');
       res.redirect('/');
     }
   });
 });
 
+app.post('/present/:id/:index',(req ,res)=>{
+  let id =req.params.id;
+  let index = req.params.index;
+  Account.findOne({_id:id} , (err , accounts)=>{
+    if(err)
+    console.log(err);
+    else{
+      accounts.attendance[index].present = accounts.attendance[index].present + 1;
+    }
+  });
+})
+
+app.post('/absent/:id/:index',(req ,res)=>{
+  let id =req.params.id;
+  let index = req.params.index;
+  Account.findOne({_id:id} , (err , accounts)=>{
+    if(err)
+    console.log(err);
+    else{
+      accounts.attendance[index].absent = accounts.attendance[index].absent + 1;
+    }
+  });
+})
+
+app.post('/profile/:id/course',(req,res)=>{
+  let coursename = req.body.coursename;
+  let id = req.params.id;
+  Account.findOne({_id:id},(err,accounts)=>{
+    if(err)
+    console.log(err)
+    else{
+      let course = {sub_code: coursename,present: 0,absent: 0}
+      accounts.attendance.push(course)
+    }
+  });
+})
+
 app.listen('3000', (err) => {
-    if (err)
+  if (err)
         console.log(err);
     else
         console.log(`app listening at 3000`);

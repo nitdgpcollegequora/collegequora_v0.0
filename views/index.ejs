@@ -95,7 +95,7 @@
         </div>
 
         <!-- body -->
-
+        
         <div class="container-md container-fluid cont">
             <% datas.reverse(); %>
             <% datas.forEach(function(dt){ %>
@@ -111,18 +111,15 @@
                     </ul>
                     <ul class="list-group flex-row">
                       <a class=" btn  list-group-item mr-1 border-0" href="/edit_question/<%= dt._id %>"> <i class="fa fa-pencil mt-1" style="font-size: 24px; color:blue"></i> </a>
-                      <a class=" btn  list-group-item border-0" href="/delete_question/<%= dt._id %>"> <i class="fa fa-trash mt-1" style="font-size: 24px; color:red"></i> </a>
+                      <a class=" btn  list-group-item border-0" href = "/delete_question/<%= dt._id %>">  <i class="fa fa-trash mt-1" style="font-size: 24px; color:red"></i> </a>
                     </ul>
-
                 </div>
                 <div class="card-footer border-0" >
                     <div class="btn btn-primary font-weight-bold">Write Answer</div>
-
                 </div>
             </div>
             <% }); %>
         </div>
-
         <!-- footer -->
 
         <div
