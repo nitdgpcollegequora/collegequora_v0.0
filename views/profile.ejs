@@ -30,7 +30,7 @@
             <% let i = 0; %>
             <% user.attendance.forEach(function(att){ %>
 
-                <li class="list-group-item flex-row justify-content-around align-items-center">
+                <li class="list-group-item flex-row d-inline-flex justify-content-around align-items-center">
                     <div><%= att.sub_code %></div>
                     <div><%= (att.present*100)/(att.present + att.absent) %></div>
                     <div>
