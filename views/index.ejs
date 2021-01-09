@@ -121,10 +121,12 @@
                         <li class="list-group-item border-0 tag mr-md-2 mb-2"><a href="#"
                                 style="text-decoration: none;color: black;"><%=dt.name%></a></li>
                     </ul>
+                    <% if(user._id == dt.uid){ %>
                     <ul class="list-group flex-row">
                         <a class=" btn  list-group-item mr-1 border-0" href="/edit_question/<%= dt._id %>/<%=user._id%>"> <i class="fa fa-pencil mt-1" style="font-size: 24px; color:rgb(50, 93, 122)"></i> </a>
                         <a class=" btn  list-group-item border-0" href="/delete_question/<%= dt._id %>/<%=user._id%>"> <i class="fa fa-trash mt-1" style="font-size: 24px; color:red"></i> </a>
                     </ul>
+                    <% } %>
                 </div>
                 <div class="card-footer border-0" >
                     <div class="btn btn-primary font-weight-bold">Write Answer</div>

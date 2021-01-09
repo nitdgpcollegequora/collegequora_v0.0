@@ -323,16 +323,16 @@ app.get('/present/:id/:index',(req ,res)=>{
     console.log(err);
     else{
       accounts.attendance[index].present = accounts.attendance[index].present + 1;
-      console.log(accounts.attendance[index]);
+      // console.log(accounts.attendance[index]);
       accounts.save((err)=>{
         if(err)
           console.log(err);
           else
           {
-            console.log("updated");
+            // console.log("updated");
             res.redirect('/profile/'+id);
           }
-          
+
 
       })
     }
@@ -352,13 +352,13 @@ app.get('/absent/:id/:index',(req ,res)=>{
           console.log(err);
           else
           {
-            console.log("updated");
+            // console.log("updated");
             res.redirect('/profile/'+id);
           }
-        
+
     });
   }
-    
+
   });
 })
 
@@ -368,7 +368,7 @@ app.get('/profile/:id',(req,res)=>{
     if(err)
     console.log(err)
     else {
-      res.render('profile',{user:user})
+      res.render('profile',{user:user,errors:req.flash('errors')})
     }
   })
 })
@@ -376,23 +376,43 @@ app.get('/profile/:id',(req,res)=>{
 app.post('/profile/:id/course',(req,res)=>{
   let coursename = req.body.course;
   let id = req.params.id;
-
-  Account.findOne({_id:id},(err,user)=>{
-    if(err)
-    console.log(err)
-    else{
-      let course = {sub_code: coursename,present: 0,absent: 0}
-      console.log(course);
-      user.attendance.push(course);
-      user.save((err)=>{
-        if(err)
-        console.log(err);
-        else
-        res.redirect('/profile/'+id);
-      });
-      
-    }
-  });
+ if(!coursename)
+ {
+   req.flash('errors','fill the course');
+   res.redirect('/profile/'+id);
+ }
+ else {
+   Account.findOne({_id:id},(err,user)=>{
+     if(err)
+     console.log(err)
+     else{
+       let flag=0;
+       for(let i=0;i<user.attendance.length;i++){
+         if(user.attendance[i].sub_code == coursename)
+         {
+           flag=1;
+           break;
+         }
+       }
+       if(flag)
+       {
+         req.flash('errors','course is already there');
+         res.redirect('/profile/'+id);
+       }
+       else {
+         let course = {sub_code: coursename,present: 0,absent: 0}
+         // console.log(course);
+         user.attendance.push(course);
+         user.save((err)=>{
+           if(err)
+           console.log(err);
+           else
+           res.redirect('/profile/'+id);
+         });
+       }
+     }
+   });
+ }
 })
 
 

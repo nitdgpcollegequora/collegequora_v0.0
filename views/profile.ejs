@@ -15,7 +15,13 @@
         <div class="font-weight-bolder text-center">
             <h2>Attandance</h2>
         </div>
-
+        <% if(errors.length){ %>
+          <% errors.forEach(function(err){%>
+            <div class="alert alert-danger text-center">
+              <%= err %>
+            </div>
+          <%})%>
+        <% } %>
         <form action="/profile/<%= user._id %>/course" method="POST">
             <div class="form-group">
                 <label for="course">Enter course name : </label>
@@ -36,7 +42,8 @@
                       <div class="list-group-item border-0"><%= (att.present*100)/(att.present + att.absent) %></div>
                       <div class="list-group-item border-0">
                           <button class="btn btn-success font-weight-bold mb-2 mb-md-0"> <a href="/present/<%= user._id %>/<%= i %>" style="text-decoration:none;color:white;">Present</a></button>
-                          <button class="btn btn-danger font-weight-bold"> <a href="/absent/<%= user._id %>/<%= i %>" style="text-decoration:none;color:white">Absent</a></button>
+                          <button class="btn btn-danger font-weight-bold mb-2 mb-md-0"> <a href="/absent/<%= user._id %>/<%= i %>" style="text-decoration:none;color:white">Absent</a></button>
+                          <button class="btn btn-secondary font-weight-bold"> <a href="/delete/<%= user._id %>/<%= i %>" style="text-decoration:none;color:white;">Delete Course</a></button>
                       </div>
                     </div>
                 </li>
