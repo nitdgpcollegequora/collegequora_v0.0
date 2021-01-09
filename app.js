@@ -315,7 +315,7 @@ app.get('/delete_question/:qid/:uid', (req , res)=>{
   });
 });
 
-app.post('/present/:id/:index',(req ,res)=>{
+app.get('/present/:id/:index',(req ,res)=>{
   let id =req.params.id;
   let index = req.params.index;
   Account.findOne({_id:id} , (err , accounts)=>{
@@ -323,11 +323,23 @@ app.post('/present/:id/:index',(req ,res)=>{
     console.log(err);
     else{
       accounts.attendance[index].present = accounts.attendance[index].present + 1;
+      console.log(accounts.attendance[index]);
+      accounts.save((err)=>{
+        if(err)
+          console.log(err);
+          else
+          {
+            console.log("updated");
+            res.redirect('/profile/'+id);
+          }
+          
+
+      })
     }
   });
 })
 
-app.post('/absent/:id/:index',(req ,res)=>{
+app.get('/absent/:id/:index',(req ,res)=>{
   let id =req.params.id;
   let index = req.params.index;
   Account.findOne({_id:id} , (err , accounts)=>{
@@ -335,7 +347,18 @@ app.post('/absent/:id/:index',(req ,res)=>{
     console.log(err);
     else{
       accounts.attendance[index].absent = accounts.attendance[index].absent + 1;
-    }
+      accounts.save((err)=>{
+        if(err)
+          console.log(err);
+          else
+          {
+            console.log("updated");
+            res.redirect('/profile/'+id);
+          }
+        
+    });
+  }
+    
   });
 })
 
@@ -351,14 +374,23 @@ app.get('/profile/:id',(req,res)=>{
 })
 
 app.post('/profile/:id/course',(req,res)=>{
-  let coursename = req.body.coursename;
+  let coursename = req.body.course;
   let id = req.params.id;
-  Account.findOne({_id:id},(err,accounts)=>{
+
+  Account.findOne({_id:id},(err,user)=>{
     if(err)
     console.log(err)
     else{
       let course = {sub_code: coursename,present: 0,absent: 0}
-      accounts.attendance.push(course)
+      console.log(course);
+      user.attendance.push(course);
+      user.save((err)=>{
+        if(err)
+        console.log(err);
+        else
+        res.redirect('/profile/'+id);
+      });
+      
     }
   });
 })

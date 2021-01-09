@@ -16,7 +16,7 @@
             <h2>Attandance</h2>
         </div>
 
-        <form action="" method="POST">
+        <form action="/profile/<%= user._id %>/course" method="POST">
             <div class="form-group">
                 <label for="course">Enter course name : </label>
                 <input type="text" class="form-control" id="course" name="course" placeholder="Enter course name....">
@@ -26,7 +26,21 @@
             </div>
         </form>
 
-        
+        <ul class="list-group flex-column container">
+            <% let i = 0; %>
+            <% user.attendance.forEach(function(att){ %>
+
+                <li class="list-group-item flex-row justify-content-around align-items-center">
+                    <div><%= att.sub_code %></div>
+                    <div><%= (att.present*100)/(att.present + att.absent) %></div>
+                    <div>
+                        <button class="btn btn-success"> <a href="/present/<%= user._id %>/<%= i %>">Present</a></button>
+                        <button class="btn btn-danger"> <a href="/absent/<%= user._id %>/<%= i %>">Absent</a></button>
+                    </div>
+                </li>
+                <% i++; %>
+            <% }) %>
+        </ul>
     </div>
 </body>
 </html>
