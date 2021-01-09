@@ -62,14 +62,14 @@
 
                 <li class="list-group-item w-100">
                     <div class="row">
-                        <div class="col-md-4 col-sm-9 col-6 font-weight-bold"><%= att.sub_code %></div>
-                        <div class="col-md-3 col-sm-3 col-6 font-weight-bold"><%= per.toFixed(2) %></div>
-                        <div class="col-md-2 col-sm-4 col-6"><button class="btn btn-success font-weight-bold mb-2 mb-md-0"> <a href="/present/<%= user._id %>/<%= i %>" style="text-decoration:none;color:white;">present</a>(<%=att.present%>)</button>
+                        <div class="col-md-4 col-sm-9 col-6 font-weight-bold mb-md-0 mb-2"><%= att.sub_code %></div>
+                        <div class="col-md-3 col-sm-3 col-6 font-weight-bold mb-md-0 mb-2"><%= per.toFixed(2) %></div>
+                        <div class="col-md-2 col-sm-4 col-6 mb-md-0 mb-2"><button class="btn btn-success font-weight-bold mb-2 mb-md-0"> <a href="/present/<%= user._id %>/<%= i %>" style="text-decoration:none;color:white;">present</a>(<%=att.present%>)</button>
                         </div>
-                        <div class="col-md-2 col-sm-4 col-6"><button class="btn btn-danger font-weight-bold"> <a href="/absent/<%= user._id %>/<%= i %>" style="text-decoration:none;color:white">Absent</a>(<%=att.absent%>)</button>
+                        <div class="col-md-2 col-sm-4 col-6 mb-md-0 mb-2"><button class="btn btn-danger font-weight-bold"> <a href="/absent/<%= user._id %>/<%= i %>" style="text-decoration:none;color:white">Absent</a>(<%=att.absent%>)</button>
                         </div>
                         <div class="col-md-1 col-sm-4 col-6">
-                        <a class="d-inline btn  list-group-item border-0" href="#"> <i class="fa fa-trash mt-1" style="font-size: 24px; color:red"></i> </a>
+                        <a class="d-inline btn  list-group-item border-0" href="/delete/<%=user._id%>/<%=i%>"> <i class="fa fa-trash mt-1" style="font-size: 24px; color:red"></i> </a>
                         </div>
                     </div>
 

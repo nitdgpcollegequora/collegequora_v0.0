@@ -415,7 +415,25 @@ app.post('/profile/:id/course',(req,res)=>{
  }
 })
 
-
+app.get('/delete/:uid/:index',(req,res)=>{
+  let uid = req.params.uid;
+  let index = req.params.index;
+  Account.findOne({_id:uid},(err,user)=>{
+    if(err)
+    console.log(err);
+    else {
+      user.attendance.splice(index,index+1);
+      user.save((err)=>{
+        if(err)
+        console.log(err);
+        else {
+          req.flash('success','deleted course successfully');
+          res.redirect('/profile/'+uid);
+        }
+      })
+    }
+  })
+})
 
 app.listen('3000', (err) => {
   if (err)
