@@ -31,6 +31,10 @@ app.get('/' , (req,res)=>{
   res.render('landing');
 });
 
+app.get('/profile' , (req , res)=>{
+  res.render('profile');
+})
+
 app.get('/home/:id', (req, res) => {
   let id =req.params.id;
   Account.findOne({_id:id},(err,user)=>{
