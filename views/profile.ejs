@@ -69,14 +69,89 @@
                         <div class="col-md-2 col-sm-4 col-6 mb-md-0 mb-2"><button class="btn btn-danger font-weight-bold"> <a href="/absent/<%= user._id %>/<%= i %>" style="text-decoration:none;color:white">Absent</a>(<%=att.absent%>)</button>
                         </div>
                         <div class="col-md-1 col-sm-4 col-6">
-                        <a class="d-inline btn  list-group-item border-0" href="/delete/<%=user._id%>/<%=i%>"> <i class="fa fa-trash mt-1" style="font-size: 24px; color:red"></i> </a>
+                        <!-- <a class="d-inline btn  list-group-item border-0 " data-toggle="modal" data-target="#myModal" href="/delete/<%=user._id%>/<%=i%>"> <i class="fa fa-trash mt-1" style="font-size: 24px; color:red"></i> </a> -->
+                        <button type="button" class="btn" data-toggle="modal" data-target="#myModal"> delete</button>
                         </div>
                     </div>
+
+                    <div class="modal fade" id="myModal">
+                        <div class="modal-dialog">
+                          <div class="modal-content">
+                          
+                            <!-- Modal Header -->
+                            <div class="modal-header">
+                              <h4 class="modal-title">Modal Heading</h4>
+                              <button type="button" class="close" data-dismiss="modal">×</button>
+                            </div>
+                            
+                            <!-- Modal body -->
+                            <div class="modal-body">
+                              Modal body..
+                            </div>
+                            
+                            <!-- Modal footer -->
+                            <div class="modal-footer">
+
+                              <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+
+                            </div>
+                            
+                          </div>
+                        </div>
+                      </div>
 
                 </li>
                 <% i++; %>
             <% }) %>
         </ul>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+            Launch demo modal
+          </button>
+          
+          <!-- Modal -->
+          <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  ...
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+    Launch demo modal
+  </button>
+  
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          ...
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
     </div>
 </body>
 </html>
