@@ -6,7 +6,7 @@
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-        
+
 
     <title>Document</title>
 </head>
@@ -30,12 +30,14 @@
             <% let i = 0; %>
             <% user.attendance.forEach(function(att){ %>
 
-                <li class="list-group-item flex-row justify-content-around align-items-center">
-                    <div><%= att.sub_code %></div>
-                    <div><%= (att.present*100)/(att.present + att.absent) %></div>
-                    <div>
-                        <button class="btn btn-success"> <a href="/present/<%= user._id %>/<%= i %>">Present</a></button>
-                        <button class="btn btn-danger"> <a href="/absent/<%= user._id %>/<%= i %>">Absent</a></button>
+                <li class="list-group-item w-100">
+                    <div class="list-group flex-row justify-content-around align-items-center w-100">
+                      <div class="list-group-item border-0"><%= att.sub_code %></div>
+                      <div class="list-group-item border-0"><%= (att.present*100)/(att.present + att.absent) %></div>
+                      <div class="list-group-item border-0">
+                          <button class="btn btn-success font-weight-bold mb-2 mb-md-0"> <a href="/present/<%= user._id %>/<%= i %>" style="text-decoration:none;color:white;">Present</a></button>
+                          <button class="btn btn-danger font-weight-bold"> <a href="/absent/<%= user._id %>/<%= i %>" style="text-decoration:none;color:white">Absent</a></button>
+                      </div>
                     </div>
                 </li>
                 <% i++; %>
