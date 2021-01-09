@@ -85,9 +85,9 @@
                                         class="fa fa-search"></i></span></div>
                         </div>
                     </li>
-                    <li class="list-group-item border-0 text-center" id="navitem"><a href="/<%=user._id%>"
+                    <li class="list-group-item border-0 text-center" id="navitem"><a href="/profile/<%=user._id%>"
                             id="navlinkitem"><%= user.username %></a></li>
-                    <li class="list-group-item border-0 text-center" id="navitem"><a href="/question"
+                    <li class="list-group-item border-0 text-center" id="navitem"><a href="/question/<%=user._id%>"
                             id="navlinkitem">Write a Question</a></li>
                     <li class="list-group-item border-0 text-center" id="navitem"><a href="/about"
                             id="navlinkitem">About Us</a></li>
@@ -102,6 +102,13 @@
         <!-- body -->
 
         <div class="container-md container-fluid cont">
+            <%if(success.length){ %>
+              <%success.forEach(function(msg){%>
+              <div class="alert alert-success">
+                <%= msg %>
+              </div>
+              <%})%>
+            <%}%>
             <% datas.reverse(); %>
             <% datas.forEach(function(dt){ %>
             <div class="card my-3 shadow-lg p-md-3 bodyitem w-100">
@@ -115,19 +122,16 @@
                                 style="text-decoration: none;color: black;"><%=dt.name%></a></li>
                     </ul>
                     <ul class="list-group flex-row">
-                        <a class=" btn  list-group-item mr-1 border-0" href="/edit_question/<%= dt._id %>"> <i class="fa fa-pencil mt-1" style="font-size: 24px; color:rgb(50, 93, 122)"></i> </a>
-                        <a class=" btn  list-group-item border-0" href="/delete_question/<%= dt._id %>"> <i class="fa fa-trash mt-1" style="font-size: 24px; color:red"></i> </a>
+                        <a class=" btn  list-group-item mr-1 border-0" href="/edit_question/<%= dt._id %>/<%=user._id%>"> <i class="fa fa-pencil mt-1" style="font-size: 24px; color:rgb(50, 93, 122)"></i> </a>
+                        <a class=" btn  list-group-item border-0" href="/delete_question/<%= dt._id %>/<%=user._id%>"> <i class="fa fa-trash mt-1" style="font-size: 24px; color:red"></i> </a>
                     </ul>
-
                 </div>
                 <div class="card-footer border-0" >
                     <div class="btn btn-primary font-weight-bold">Write Answer</div>
-
                 </div>
             </div>
             <% }); %>
         </div>
-
         <!-- footer -->
 
         <div
