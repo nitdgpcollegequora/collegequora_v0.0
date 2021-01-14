@@ -6,7 +6,6 @@ const random = require('random');
 const session = require('express-session');
 const flash = require('connect-flash');
 const bcrypt = require('bcryptjs');
-
 const app = express();
 app.set('view engine', 'ejs');
 
@@ -17,7 +16,6 @@ app.use(session({
   resave: true,
   saveUninitialized: true
 }));
-
 
 app.use(flash());
 
@@ -40,14 +38,13 @@ db.on('error', function (err) {
     console.log(err);
 });
 
-
-
-
 app.get('/' , (req,res)=>{
   res.render('landing');
 });
 
-
+app.get('/profile' , (req , res)=>{
+  res.render('profile');
+})
 
 app.get('/home/:id', (req, res) => {
   let id =req.params.id;
@@ -55,95 +52,51 @@ app.get('/home/:id', (req, res) => {
     if(err)
     console.log(err);
     else {
-      if(user.login)
-      {
       data.find({}, function (err, datas) {
           if (err)
               console.log(err);
           else {
-              res.render('index', {datas: datas,user:user,success:req.flash('success'),error:req.flash('error')});
+              res.render('index', {datas: datas,user:user,success:req.flash('success')});
           }
       })
     }
-    else {
-      req.flash('error','please login');
-      res.redirect('/login');
-    }
-  }
   })
 });
 
 app.get('/question/:uid', (req, res) => {
-  let uid = req.params.uid;
-  Account.findOne({_id:uid},(err,user)=>{
-    if(err)
-    console.log(err);
-    else if(!user)
-    {
-      req.flash('error','please login');
-      res.redirect('/login');
-    }
-    else if(!user.login)
-    {
-      req.flash('error','please login');
-      res.redirect('/login');
-    }
-    else {
-      res.render('question',{uid:uid});
-    }
-  })
+    let uid = req.params.uid;
+    res.render('question',{uid:uid});
 });
-
-// let uid = req.params.uid;
-// Account.findOne({_id:uid},(err,user)=>{
-//   if(err)
-//   console.log(err);
-//   else if(!user)
-//   {
-//     req.flash('error','please login');
-//     res.redirect('/login');
-//   }
-//   else if(!user.login)
-//   {
-//     req.flash('error','please login');
-//     res.redirect('/login');
-//   }
-//   else {
-//
-//   }
-// })
 
 app.post('/question/:uid', (req, res) => {
   let uid = req.params.uid;
-  Account.findOne({_id:uid},(err,user)=>{
-    if(err)
-    console.log(err);
-    else if(!user)
-    {
-      req.flash('error','please login');
-      res.redirect('/login');
-    }
-    else if(!user.login)
-    {
-      req.flash('error','please login');
-      res.redirect('/login');
-    }
-    else {
-      let Data = new data();
-      Data.uid = uid;
-      Data.name = req.body.subjectcode;
-      Data.content = req.body.problem;
-      Data.save(function (err) {
-          if (err) {
+    let Data = new data();
+    Data.uid = uid;
+    Data.name = req.body.subjectcode;
+    Data.content = req.body.problem;
+    Data.save(function (err) {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            Account.findOne({_id:uid} , (err , user)=>{
+              if(err)
               console.log(err);
-          }
-          else {
-              res.redirect('/home/'+uid);
-          }
-      })
-    }
-  })
-
+              else{
+                user.no_ques++;
+                user.save((err)=>{
+                  if(err)
+                  console.log(err);
+                  else
+                  {
+                    res.redirect('/home/'+uid);
+                  }
+                })
+              }
+            })
+            
+        }
+    })
 });
 
 app.get('/about', (req, res) => {
@@ -159,78 +112,38 @@ app.get('/contact', (req, res) => {
 
 
 app.get('/login', (req, res) => {
-    res.render('login',{error:req.flash('error'),success:req.flash('success')});
+    res.render('login');
 });
 
-app.post('/login',(req,res)=>{
-  let email = req.body.email;
-  let password = req.body.password;
-  if(!email||!password)
-  {
-    req.flash('error','fill all the fields');
-    res.redirect('/login');
-  }
-  else {
-    Account.findOne({email:email},(err,user)=>{
+app.post('/login', (req, res) => {
+    let username = req.body.username;
+    let password = req.body.password;
+    Account.findOne({username:username},(err,accounts)=>{
       if(err)
       console.log(err);
-      else {
-        if(!user)
+      else{
+        if(accounts)
         {
-          req.flash('error','email does not exist');
-          res.redirect('/login');
-        }
-        else {
-          let username = user.username;
-          bcrypt.compare(password,user.password,(err,matched)=>{
+          Account.findOne({password:password},(err,accounts)=>{
             if(err)
             console.log(err);
-            else if(matched)
-            {
-              user.login =1;
-              user.save(err=>{
-                if(err)
-                console.log(err);
-                else {
-                  req.flash('success',`welcome ${username}`);
-                  res.redirect('/home/'+user._id);
-                }
-              })
-            }
-            else {
-              req.flash('error','wrong password');
-              res.redirect('/login');
+            else{
+              if(accounts)
+              {
+                res.redirect('/home/'+accounts._id);
+              }
+              else {
+                res.redirect('/login');
+              }
             }
           })
         }
-      }
-    })
-  }
-})
-
-app.get('/logout/:uid',(req,res)=>{
-  let uid = req.params.uid;
-  Account.findOne({_id:uid},(err,user)=>{
-    if(err)
-    console.log(err);
-    else if(!user)
-    {
-      req.flash('error','please register');
-      res.redirect('/register');
-    }
-    else {
-      user.login = 0;
-      user.save(err=>{
-        if(err)
-        console.log(err);
         else {
-          req.flash('success','successfully logged out');
           res.redirect('/login');
         }
-      })
-    }
-  })
-})
+      }
+    })
+});
 
 // you ask for the register page
 app.get('/register', (req, res) => {
@@ -241,52 +154,60 @@ app.get('/register', (req, res) => {
 
 // when user enters a email and password for a new account
 app.post('/register', (req, res) =>{
-  let email = req.body.email;
-let username = req.body.username;
-let password = req.body.password;
-if(!email || !username || !password)
-{
-  req.flash('error','fill all fields');
-  res.redirect('/register');
-}
-else
-{
-    Account.findOne({email:email},(err,users)=>{
-      if(err)
-      console.log(err);
-      else {
-        console.log(users);
-        if(users)
-        {
-          req.flash('error','this email is already in use');
-          res.redirect('/register');
+    let account = new Account();
+    account.username = req.body.username;
+    account.email = req.body.email;
+    account.password = req.body.password;
+    account.no_ques = 0;
+    if(account.email.length)
+    {
+      Account.findOne({email:account.email},(err,accounts)=>{
+        if(err)
+        console.log(err);
+        else {
+          if(accounts)
+          {
+            res.redirect('/register');
+          }
+          else {
+            if(account.username.length)
+            {
+              Account.findOne({username:account.username},(err,accounts)=>{
+                if(err)
+                console.log(err);
+                else {
+                  if(accounts)
+                  {
+                    res.redirect('/register');
+                  }
+                  else {
+                    if(account.password.length)
+                    {
+                      account.save(err=>{
+                        if(err)
+                        console.log(err);
+                        else {
+                          res.redirect('/login');
+                        }
+                      })
+                    }
+                    else {
+                      res.redirect('/register');
+                    }
+                  }
+                }
+              })
+            }
+            else {
+              res.redirect('/register');
+            }
+          }
         }
-        else
-        {
-          let newuser = new Account({
-            email,
-            username,
-            password
-          })
-          bcrypt.genSalt(10,(err,salt)=>
-          bcrypt.hash(newuser.password,salt,(err,hash)=>{
-            if(err)
-            console.log(err);
-            newuser.password = hash;
-            newuser.save(err=>{
-              if(err)
-              console.log(err);
-              else {
-                res.redirect('/login');
-              }
-            })
-          }))
-        }
-
-
-      }
-    })
-}
+      })
+    }
+    else {
+      res.redirect('/register');
+    }
 });
 
 app.get('/forgotpassword', (req, res) => {
@@ -360,99 +281,78 @@ app.post('/otp', (req, res) => {
     });
 });
 
-app.get('/edit_question/:qid/:uid' , (req , res)=>{
+app.get('/edit_question/:qid/:uid/:loc' , (req , res)=>{
     let qid = req.params.qid;
     let uid = req.params.uid;
+    let loc = req.params.loc;
     Account.findOne({_id:uid},(err,user)=>{
       if(err)
       console.log(err)
-      else if(!user)
-      {
-        req.flash('error','please login');
-        res.redirect('/login');
-      }
-      else if(!user.login)
-      {
-        req.flash('error','please login');
-        res.redirect('/login');
-      }
       else {
         data.findOne({_id:qid} , (err , datas)=>{
           if(err)
           console.log(err);
           else{
-              res.render('edit_question.ejs' , { data:datas,user:user});
+              res.render('edit_question.ejs' , {loc:loc , data:datas,user:user});
           }
       });
       }
     })
 });
 
-app.post('/edit_question/:qid/:uid' , (req , res)=>{
+app.post('/edit_question/:qid/:uid/:loc' , (req , res)=>{
     let qid = req.params.qid;
     let subjectcode =req.body.subjectcode;
     let problem = req.body.problem;
     let uid = req.params.uid;
-    Account.findOne({_id:uid},(err,user)=>{
-      if(err)
-      console.log(err);
-      else if(!user)
-      {
-        req.flash('error','please login');
-        res.redirect('/login');
-      }
-      else if(!user.login)
-      {
-        req.flash('error','please login');
-        res.redirect('/login');
-      }
-      else {
-
+    let loc = req.params.loc;
         let Data = new data;
         Data = {
-          name : subjectcode.trim() ,
-          content : problem.trim()
+            name : subjectcode.trim() ,
+            content : problem.trim()
         };
 
         data.updateOne({_id:qid} , Data , (err)=>{
-          if(err)
-          console.log(err);
-          else{
-            res.redirect('/home/'+uid);
-          }
+            if(err)
+            console.log(err);
+            else{
+                if(loc == 0)
+                res.redirect('/home/'+uid);
+                else
+                res.redirect('/profile/'+uid+'/My_questions');
+            }
         })
-      }
-    })
 })
 
-app.get('/delete_question/:qid/:uid', (req , res)=>{
+app.get('/delete_question/:qid/:uid/:loc', (req , res)=>{
   let qid = req.params.qid;
   let uid = req.params.uid;
-  Account.findOne({_id:uid},(err,user)=>{
+  let loc = req.params.loc;
+  data.deleteOne({_id:qid},(err)=>{
     if(err)
     console.log(err);
-    else if(!user)
-    {
-      req.flash('error','please login');
-      res.redirect('/login');
-    }
-    else if(!user.login)
-    {
-      req.flash('error','please login');
-      res.redirect('/login');
-    }
-    else {
-
-      data.deleteOne({_id:qid},(err)=>{
+    else{
+      Account.findOne({_id:uid} , (err , user)=>{
         if(err)
         console.log(err);
         else{
-          req.flash('success','Deleted sucessfully');
-          res.redirect('/home/'+uid);
+          user.no_ques--;
+          user.save((err)=>{
+            if(err)
+            console.log(err);
+            else{
+              req.flash('success','Deleted sucessfully');
+              if(loc == 1)
+              res.redirect('/profile/'+uid+'/My_questions');
+              else
+              res.redirect('/home/'+uid);
+            }
+          })
         }
-      });
+      })
+      
     }
-  })
+  });
 });
 
 app.get('/present/:id/:index',(req ,res)=>{
@@ -461,16 +361,6 @@ app.get('/present/:id/:index',(req ,res)=>{
   Account.findOne({_id:id} , (err , accounts)=>{
     if(err)
     console.log(err);
-    else if(!accounts)
-    {
-      req.flash('error','please login');
-      res.redirect('/login');
-    }
-    else if(!accounts.login)
-    {
-      req.flash('error','please login');
-      res.redirect('/login');
-    }
     else{
       accounts.attendance[index].present = accounts.attendance[index].present + 1;
       // console.log(accounts.attendance[index]);
@@ -495,16 +385,6 @@ app.get('/absent/:id/:index',(req ,res)=>{
   Account.findOne({_id:id} , (err , accounts)=>{
     if(err)
     console.log(err);
-    else if(!accounts)
-    {
-      req.flash('error','please login');
-      res.redirect('/login');
-    }
-    else if(!accounts.login)
-    {
-      req.flash('error','please login');
-      res.redirect('/login');
-    }
     else{
       accounts.attendance[index].absent = accounts.attendance[index].absent + 1;
       accounts.save((err)=>{
@@ -527,18 +407,8 @@ app.get('/profile/:id',(req,res)=>{
   Account.findOne({_id:id},(err,user)=>{
     if(err)
     console.log(err)
-    else if(!user)
-    {
-      req.flash('error','please login');
-      res.redirect('/login');
-    }
-    else if(!user.login)
-    {
-      req.flash('error','please login');
-      res.redirect('/login');
-    }
     else {
-      res.render('profile',{user:user,error:req.flash('error')})
+      res.render('profile',{user:user,error:req.flash('error'), success:req.flash('success')});
     }
   })
 })
@@ -555,16 +425,6 @@ app.post('/profile/:id/course',(req,res)=>{
    Account.findOne({_id:id},(err,user)=>{
      if(err)
      console.log(err)
-     else if(!user)
-     {
-       req.flash('error','please login');
-       res.redirect('/login');
-     }
-     else if(!user.login)
-     {
-       req.flash('error','please login');
-       res.redirect('/login');
-     }
      else{
        let flag=0;
        for(let i=0;i<user.attendance.length;i++){
@@ -587,7 +447,12 @@ app.post('/profile/:id/course',(req,res)=>{
            if(err)
            console.log(err);
            else
-           res.redirect('/profile/'+id);
+           {
+            req.flash('success','Course Added sucessfully');
+            res.redirect('/profile/'+id);
+
+           }
+           
          });
        }
      }
@@ -601,16 +466,6 @@ app.get('/delete/:uid/:index',(req,res)=>{
   Account.findOne({_id:uid},(err,user)=>{
     if(err)
     console.log(err);
-    else if(!user)
-    {
-      req.flash('error','please login');
-      res.redirect('/login');
-    }
-    else if(!user.login)
-    {
-      req.flash('error','please login');
-      res.redirect('/login');
-    }
     else {
       user.attendance.splice(index,index+1);
       user.save((err)=>{
@@ -625,7 +480,142 @@ app.get('/delete/:uid/:index',(req,res)=>{
   })
 })
 
+app.get('/profile/:uid/My_questions' , (req , res)=>{
+  let uid = req.params.uid;
+  Account.findOne({_id:uid},(err,user)=>{
+    if(err)
+    console.log(err);
+    else {
+      data.find({uid:uid}, function (err, datas) {
+          if (err)
+              console.log(err);
+          else {
+              res.render('my_questions', {datas: datas,user:user,success:req.flash('success')});
+          }
+      })
+    }
+  })
+})
+
+app.get('/profile/:uid/edit_profile' , (req , res)=>{
+  let uid = req.params.uid;
+  Account.findOne({_id:uid} , (err , user)=>{
+    if(err)
+    console.log(err);
+    else
+    res.render('edit_profile', {user:user , success:req.flash('success') , error:req.flash('error')});
+  })
+})
+
+
+
+// app.post('/profile/:uid/edit_profile/edit_password' , (req , res)=>{
+//   let uid = req.params.uid;
+//   Account.findOne({_id:uid})
+// })
+
+app.get('/profile/:uid/edit_profile/edit_username' , (req , res)=>{
+  let uid = req.params.uid;
+  Account.findOne({_id:uid} , (err , user)=>{
+    if(err)
+    console.log(err);
+    else
+    res.render('edit_username', {user:user});
+  })
+})
+
+
+app.post('/profile/:uid/edit_profile/edit_username' , (req , res)=>{
+  let uid = req.params.uid;
+  Account.findOne({_id:uid} , (err , user)=>{
+    if(err)
+    console.log(err);
+    else{
+      let username = req.body.username.trim();
+      if(username != user.username && username.length != 0)
+      {
+        user.username = username;
+        user.save((err)=>{
+          if(err)
+          console.log(err);
+          else
+          {
+            req.flash('success' , 'Username updated successfully'); 
+          }
+        })
+      }
+      res.redirect('/profile/'+uid+'/edit_profile');
+    }
+  })
+})
+
+app.get('/profile/:uid/edit_profile/edit_password' , (req , res)=>{
+  let uid = req.params.uid;
+  Account.findOne({_id:uid} , (err , user)=>{
+    if(err)
+    console.log(err);
+    else
+    res.render('edit_password', {user:user , error:req.flash('error')});
+  })
+})
+
+app.post('/profile/:uid/edit_profile/edit_password' , (req , res)=>{
+  let uid = req.params.uid;
+  Account.findOne({_id:uid} , (err , user)=>{
+    if(err)
+    console.log(err);
+    else{
+      let old_pass = req.body.old_password.trim();
+      let new_pass = req.body.new_password.trim();
+      let confirm_pass = req.body.confirm_pass.trim();
+      let flag = [0 , 0 , 0];
+      if(old_pass == user.password)
+      flag[0]++;
+      if(new_pass == confirm_pass && new_pass.length > 0)
+      flag[1]++;
+      if(new_pass.length > 0 || confirm_pass.length > 0)
+      flag[2]++;
+
+      
+
+      if(flag[0] == 1) //old password entered correctly
+      {
+        if(flag[1] == 1) // new_password and confirm_password are valid
+        {
+          user.password = new_pass;
+          user.save((err)=>{
+            if(err)
+            console.log(err);
+            else{
+              req.flash('success' , 'password Updated successfully');
+              res.redirect('/profile/'+uid+'/edit_profile');
+            }
+          })
+          
+        }
+        else{ // new password and confirm password not valid
+          req.flash('error' , 'new password and confirm password not matching');
+          res.redirect('/profile/'+uid+'/edit_profile/edit_password');
+        }
+      }
+      else{ // old password wrong or not entered
+        if(flag[2] == 1)
+        {
+          req.flash('error' , 'old password wrong');
+          res.redirect('/profile/'+uid+'/edit_profile/edit_password');
+        }
+        else{
+        
+          res.redirect('/profile/'+uid+'/edit_profile');
+        }
+
+      }
+    }
+  })
+})
+
 app.listen('3000', (err) => {
+  
   if (err)
         console.log(err);
     else
