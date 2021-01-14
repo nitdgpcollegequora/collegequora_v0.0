@@ -17,7 +17,7 @@
                     width: 100%;
                 }
 
-                #username,
+                #email,
                 #password {
                     width: 95%;
                 }
@@ -35,10 +35,24 @@
             <div class="w-100 text-center mt-3">
                 <h2 class="font-weight-bold">Login</h2>
             </div>
+            <%if(error){%>
+              <%error.forEach(function(err){%>
+                <div class="alert alert-danger text-center">
+                  <%=err%>
+                </div>
+              <%})%>
+            <%}%>
+            <%if(success){%>
+              <%success.forEach(function(msg){%>
+                <div class="alert alert-success text-center">
+                  <%=msg%>
+                </div>
+              <%})%>
+            <%}%>
             <form method="POST" action="/login" class="m-auto" id="loginform">
                 <div class="form-group">
-                    <label for="username" class="font-weight-bold">Username</label>
-                    <input type="text" class="form-control" id="username" name="username" placeholder="Username">
+                    <label for="email" class="font-weight-bold">email</label>
+                    <input type="text" class="form-control" id="email" name="email" placeholder="email">
                 </div>
                 <div class="form-group">
                     <label for="password" class="font-weight-bold">Password</label>

@@ -5,6 +5,7 @@ const nodemailer = require('nodemailer');
 const random = require('random');
 const session = require('express-session');
 const flash = require('connect-flash');
+const bcrypt = require('bcryptjs');
 const app = express();
 app.set('view engine', 'ejs');
 
@@ -407,7 +408,7 @@ app.get('/profile/:id',(req,res)=>{
     if(err)
     console.log(err)
     else {
-      res.render('profile',{user:user,errors:req.flash('errors'), success:req.flash('success')});
+      res.render('profile',{user:user,error:req.flash('error'), success:req.flash('success')});
     }
   })
 })
@@ -417,7 +418,7 @@ app.post('/profile/:id/course',(req,res)=>{
   let id = req.params.id;
  if(!coursename)
  {
-   req.flash('errors','fill the course');
+   req.flash('error','fill the course');
    res.redirect('/profile/'+id);
  }
  else {
@@ -435,7 +436,7 @@ app.post('/profile/:id/course',(req,res)=>{
        }
        if(flag)
        {
-         req.flash('errors','course is already there');
+         req.flash('error','course is already there');
          res.redirect('/profile/'+id);
        }
        else {
@@ -502,7 +503,7 @@ app.get('/profile/:uid/edit_profile' , (req , res)=>{
     if(err)
     console.log(err);
     else
-    res.render('edit_profile', {user:user , success:req.flash('success') , errors:req.flash('errors')});
+    res.render('edit_profile', {user:user , success:req.flash('success') , error:req.flash('error')});
   })
 })
 
@@ -554,7 +555,7 @@ app.get('/profile/:uid/edit_profile/edit_password' , (req , res)=>{
     if(err)
     console.log(err);
     else
-    res.render('edit_password', {user:user , errors:req.flash('errors')});
+    res.render('edit_password', {user:user , error:req.flash('error')});
   })
 })
 
@@ -593,17 +594,18 @@ app.post('/profile/:uid/edit_profile/edit_password' , (req , res)=>{
           
         }
         else{ // new password and confirm password not valid
-          req.flash('errors' , 'new password and confirm password not matching');
+          req.flash('error' , 'new password and confirm password not matching');
           res.redirect('/profile/'+uid+'/edit_profile/edit_password');
         }
       }
       else{ // old password wrong or not entered
         if(flag[2] == 1)
         {
-          req.flash('errors' , 'old password wrong');
+          req.flash('error' , 'old password wrong');
           res.redirect('/profile/'+uid+'/edit_profile/edit_password');
         }
         else{
+        
           res.redirect('/profile/'+uid+'/edit_profile');
         }
 

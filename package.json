@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/nitdgpcollegequora/collegequora_v0.0#readme",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
     "connect-flash": "^0.1.1",
     "ejs": "^3.1.5",
