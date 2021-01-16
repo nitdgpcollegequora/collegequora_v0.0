@@ -112,13 +112,13 @@ app.get('/contact', (req, res) => {
 
 
 app.get('/login', (req, res) => {
-    res.render('login');
+    res.render('login' , {error:req.flash('error') , success:req.flash('success')});
 });
 
 app.post('/login', (req, res) => {
-    let username = req.body.username;
+    let username = req.body.email;
     let password = req.body.password;
-    Account.findOne({username:username},(err,accounts)=>{
+    Account.findOne({email:username},(err,accounts)=>{
       if(err)
       console.log(err);
       else{
@@ -602,6 +602,11 @@ app.post('/profile/:uid/edit_profile/edit_password' , (req , res)=>{
         if(flag[2] == 1)
         {
           req.flash('error' , 'old password wrong');
+          res.redirect('/profile/'+uid+'/edit_profile/edit_password');
+        }
+        else if(old_pass.length > 0 && flag[2] == 0)
+        {
+          req.flash('error' , 'old password wrong and new password and confirm password not valid');
           res.redirect('/profile/'+uid+'/edit_profile/edit_password');
         }
         else{

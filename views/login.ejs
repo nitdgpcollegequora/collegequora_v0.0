@@ -16,7 +16,7 @@
                 #loginform {
                     width: 100%;
                 }
-
+overflow-y: ;
                 #email,
                 #password {
                     width: 95%;
@@ -35,14 +35,14 @@
             <div class="w-100 text-center mt-3">
                 <h2 class="font-weight-bold">Login</h2>
             </div>
-            <%if(error){%>
+            <%if(error.length){%>
               <%error.forEach(function(err){%>
                 <div class="alert alert-danger text-center">
                   <%=err%>
                 </div>
               <%})%>
             <%}%>
-            <%if(success){%>
+            <%if(success.length){%>
               <%success.forEach(function(msg){%>
                 <div class="alert alert-success text-center">
                   <%=msg%>
