@@ -735,6 +735,29 @@ app.post('/profile/:uid/edit_profile/edit_password' , (req , res)=>{
   })
 })
 
+app.get('/logout/:uid',(req,res)=>{
+  let uid = req.params.uid;
+  Account.findOne({_id:uid},(err,user)=>{
+    if(err)
+    console.log(err);
+    else if(!user)
+    {
+      req.flash('error',`user doesn't exist`);
+      res.redirect('/login');
+    }
+    else {
+      user.login = 0;
+      user.save(err=>{
+        if(err)
+        console.log(err);
+        else {
+          res.redirect('/login');
+        }
+      })
+    }
+  })
+})
+
 app.listen('3000', (err) => {
 
   if (err)
