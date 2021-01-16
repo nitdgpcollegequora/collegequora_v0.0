@@ -6,6 +6,8 @@ const random = require('random');
 const session = require('express-session');
 const flash = require('connect-flash');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+
 const app = express();
 app.set('view engine', 'ejs');
 
@@ -42,15 +44,18 @@ app.get('/' , (req,res)=>{
   res.render('landing');
 });
 
-app.get('/profile' , (req , res)=>{
-  res.render('profile');
-})
+
 
 app.get('/home/:id', (req, res) => {
   let id =req.params.id;
   Account.findOne({_id:id},(err,user)=>{
     if(err)
     console.log(err);
+    else if(!user)
+    {
+      req.flash('error',`user don't exist`);
+      res.redirect('/login');
+    }
     else {
       data.find({}, function (err, datas) {
           if (err)
@@ -65,20 +70,53 @@ app.get('/home/:id', (req, res) => {
 
 app.get('/question/:uid', (req, res) => {
     let uid = req.params.uid;
-    res.render('question',{uid:uid});
+    Account.findOne({_id:uid},(err,user)=>{
+      if(err)
+      console.log(err);
+      else if(!user)
+      {
+        req.flash('error',`user doesn't exist`);
+        res.redirect('/login');
+      }
+      else {
+        res.render('question',{user:user,error:req.flash('error')});
+      }
+    })
 });
 
 app.post('/question/:uid', (req, res) => {
   let uid = req.params.uid;
-    let Data = new data();
-    Data.uid = uid;
-    Data.name = req.body.subjectcode;
-    Data.content = req.body.problem;
-    Data.save(function (err) {
-        if (err) {
+  Account.findOne({_id:uid},(err,user)=>{
+    if(err)
+    console.log(err);
+    else if(!user)
+    {
+      req.flash('error',`user don't exist`);
+      res.redirect('/login');
+    }
+    else if(!user.login)
+    {
+      req.flash('error','please log in');
+      res.redirect('/login');
+    }
+    else {
+
+      let Data = new data();
+      Data.uid = uid;
+      Data.name = req.body.subjectcode;
+      Data.content = req.body.problem;
+      if(!Data.name)
+      {
+        req.flash('error','please fill subjectcode');
+        res.redirect('/question/'+uid);
+      }
+      else {
+
+        Data.save(function (err) {
+          if (err) {
             console.log(err);
-        }
-        else {
+          }
+          else {
             Account.findOne({_id:uid} , (err , user)=>{
               if(err)
               console.log(err);
@@ -94,9 +132,12 @@ app.post('/question/:uid', (req, res) => {
                 })
               }
             })
-            
-        }
-    })
+
+          }
+        })
+      }
+    }
+  })
 });
 
 app.get('/about', (req, res) => {
@@ -112,124 +153,131 @@ app.get('/contact', (req, res) => {
 
 
 app.get('/login', (req, res) => {
-    res.render('login' , {error:req.flash('error') , success:req.flash('success')});
+    res.render('login',{error:req.flash('error')});
 });
 
 app.post('/login', (req, res) => {
-    let username = req.body.email;
+    let username = req.body.username;
     let password = req.body.password;
-    Account.findOne({email:username},(err,accounts)=>{
+    Account.findOne({username:username},(err,user)=>{
       if(err)
       console.log(err);
+      else if(!user)
+      {
+        req.flash('error',`user don't exist`);
+        res.redirect('/login');
+      }
       else{
-        if(accounts)
-        {
-          Account.findOne({password:password},(err,accounts)=>{
-            if(err)
-            console.log(err);
-            else{
-              if(accounts)
-              {
-                res.redirect('/home/'+accounts._id);
-              }
+          if(bcrypt.compare(password,user.password))
+          {
+            user.login=1;
+            user.save(err=>{
+              if(err)
+              console.log(err);
               else {
-                res.redirect('/login');
+                // jwt.sign({user:user},'secretkey',(err,token)=>{
+                //
+                // })
+                req.flash('success',`welcome ${username}`);
+                res.redirect('/home/'+user._id);
               }
-            }
-          })
-        }
-        else {
-          res.redirect('/login');
-        }
+            })
+          }
+          else {
+            req.flash('error','incorrect password');
+            res.redirect('/login');
+          }
       }
     })
 });
 
 // you ask for the register page
 app.get('/register', (req, res) => {
-    messages = [];
-    res.render('register', {messages: messages});
+    res.render('register', {error:req.flash('error')});
 
 });
 
 // when user enters a email and password for a new account
 app.post('/register', (req, res) =>{
-    let account = new Account();
-    account.username = req.body.username;
-    account.email = req.body.email;
-    account.password = req.body.password;
-    account.no_ques = 0;
-    if(account.email.length)
+    let username = req.body.username;
+    let email = req.body.email;
+    let password = req.body.password;
+    if(!username || !email || !password)
     {
-      Account.findOne({email:account.email},(err,accounts)=>{
+      req.flash('error','please fill all fields');
+      res.redirect('/register');
+    }
+    else {
+
+      Account.findOne({email:email},(err,user)=>{
         if(err)
         console.log(err);
+        else if(user)
+        {
+          req.flash('error','email already registered');
+          res.redirect('/register');
+        }
         else {
-          if(accounts)
-          {
-            res.redirect('/register');
-          }
-          else {
-            if(account.username.length)
+          Account.findOne({username:username},(err,user)=>{
+            if(err)
+            console.log(err);
+            else if(user)
             {
-              Account.findOne({username:account.username},(err,accounts)=>{
+              req.flash('error','this username already exists,please try other one');
+              res.redirect('/register');
+            }
+            else {
+              bcrypt.genSalt(10,(err,salt)=>{
                 if(err)
                 console.log(err);
                 else {
-                  if(accounts)
-                  {
-                    res.redirect('/register');
-                  }
-                  else {
-                    if(account.password.length)
-                    {
+                  bcrypt.hash(password,salt,(err,hashedpassword)=>{
+                    if(err)
+                    console.log(err);
+                    else {
+                      let account = new Account();
+                      account.username = username;
+                      account.email =  email;
+                      account.password = hashedpassword;
+                      account.otp = 0 ;
+                      account.login = 1;
+                      account.no_ques = 0;
                       account.save(err=>{
                         if(err)
                         console.log(err);
                         else {
-                          res.redirect('/login');
+                          req.flash('success',`welcome ${username}`);
+                          res.redirect('/home/'+account._id);
                         }
                       })
                     }
-                    else {
-                      res.redirect('/register');
-                    }
-                  }
+                  })
                 }
               })
             }
-            else {
-              res.redirect('/register');
-            }
-          }
+          })
         }
       })
-    }
-    else {
-      res.redirect('/register');
     }
 });
 
 app.get('/forgotpassword', (req, res) => {
-    messages = [];
-    res.render('forgotpassword', {messages: messages});
+    res.render('forgotpassword', {error:req.flash('error')});
 });
 
 app.post('/forgotpassword', (req, res) => {
 
     let email = req.body.email;
-    if(email.length === 0) {
-        messages = [];
-            messages.push({fail: 1, message: 'Enter a valid email id.'});
-            return res.render('forgotpassword', {messages: messages});
+    if(!email) {
+      req.flash('error','please enter email');
+      res.redirect('/forgotpassword');
     }
-    Account.find({email: email}, (err, accounts) => {
-        if(!accounts){
-            console.log('There exist no account with this email id');
-            //res.redirect('register');
-            messages = [];
-            messages.push({fail: 1, message: 'There is no email with this email id.'});
-            return res.render('forgotpassword', {messages: messages});
+    Account.find({email: email}, (err, user) => {
+      if(err)
+      console.log(err);
+      else if(!user){
+            req.flash('error',`email doesn't exist`);
+            res.redirect('/forgotpassword');
         } else {
             let otp = random.int(min = 1000, max = 9999);
             //console.log('HI1');
@@ -255,28 +303,31 @@ app.post('/forgotpassword', (req, res) => {
                     console.log('Email sent: ' + info.response);
                 }
             });
-            accounts.otp = otp;
-            res.render('otp');
+            user.otp = otp;
+            res.redirect('/otp');
         }
     });
 
 });
 
+app.get('/otp',(req,res)=>{
+  res.render('otp',{error:req.flash('error')});
+})
+
 // when user gives our otp
 app.post('/otp', (req, res) => {
     let otp = req.body.otp;
     let password = req.body.password;
-    Account.find({otp: otp}, (err, accounts) => {
+    Account.find({otp: otp}, (err, user) => {
         if (err) {
             console.log(err);
-        } else if (!accounts) {
-            console.log('Enter a valid otp');
-            res.render('otp');
+        } else if (!user) {
+            req.flash('error','enter valid otp');
+            res.redirect('/otp');
         } else {
-            console.log('Valid otp entered');
-            accounts.password = password;
-            accounts.otp = 0;
-            res.redirect('login');
+            user.password = password;
+            user.otp = 0;
+            res.redirect('/login');
         }
     });
 });
@@ -288,6 +339,11 @@ app.get('/edit_question/:qid/:uid/:loc' , (req , res)=>{
     Account.findOne({_id:uid},(err,user)=>{
       if(err)
       console.log(err)
+      else if(!user)
+      {
+        req.flash('error',`user doesn't exist`);
+        res.redirect('/login');
+      }
       else {
         data.findOne({_id:qid} , (err , datas)=>{
           if(err)
@@ -306,6 +362,15 @@ app.post('/edit_question/:qid/:uid/:loc' , (req , res)=>{
     let problem = req.body.problem;
     let uid = req.params.uid;
     let loc = req.params.loc;
+    Account.findOne({_id:uid},(err,user)=>{
+      if(err)
+      console.log(err);
+      else if(!user)
+      {
+        req.flash('error',`user doesn't exist`);
+        res.redirect('/login');
+      }
+      else {
         let Data = new data;
         Data = {
             name : subjectcode.trim() ,
@@ -313,14 +378,14 @@ app.post('/edit_question/:qid/:uid/:loc' , (req , res)=>{
         };
 
         data.updateOne({_id:qid} , Data , (err)=>{
-            if(err)
-            console.log(err);
-            else{
-                if(loc == 0)
-                res.redirect('/home/'+uid);
-                else
-                res.redirect('/profile/'+uid+'/My_questions');
-            }
+          if(err)
+          console.log(err);
+          else{
+            if(loc == 0)
+            res.redirect('/home/'+uid);
+            else
+            res.redirect('/profile/'+uid+'/My_questions');
+          }
         })
 })
 
@@ -335,6 +400,15 @@ app.get('/delete_question/:qid/:uid/:loc', (req , res)=>{
       Account.findOne({_id:uid} , (err , user)=>{
         if(err)
         console.log(err);
+        else if (!user) {
+          req.flash('error',`user doesn't exist`);
+          res.redirect('/login');
+        }
+        else if(!user.login)
+        {
+          req.flash('error','please login');
+          res.redirect('login');
+        }
         else{
           user.no_ques--;
           user.save((err)=>{
@@ -350,7 +424,7 @@ app.get('/delete_question/:qid/:uid/:loc', (req , res)=>{
           })
         }
       })
-      
+
     }
   });
 });
@@ -358,13 +432,23 @@ app.get('/delete_question/:qid/:uid/:loc', (req , res)=>{
 app.get('/present/:id/:index',(req ,res)=>{
   let id =req.params.id;
   let index = req.params.index;
-  Account.findOne({_id:id} , (err , accounts)=>{
+  Account.findOne({_id:id} , (err , user)=>{
     if(err)
     console.log(err);
+    else if(!user)
+    {
+      req.flash('error',`user doesn't exist`);
+      res.redirect('/login');
+    }
+    else if(!user.login)
+    {
+      req.flash('error','please login');
+      res.redirect('/login');
+    }
     else{
-      accounts.attendance[index].present = accounts.attendance[index].present + 1;
-      // console.log(accounts.attendance[index]);
-      accounts.save((err)=>{
+      user.attendance[index].present = user.attendance[index].present + 1;
+      // console.log(user.attendance[index]);
+      user.save((err)=>{
         if(err)
           console.log(err);
           else
@@ -382,12 +466,22 @@ app.get('/present/:id/:index',(req ,res)=>{
 app.get('/absent/:id/:index',(req ,res)=>{
   let id =req.params.id;
   let index = req.params.index;
-  Account.findOne({_id:id} , (err , accounts)=>{
+  Account.findOne({_id:id} , (err , user)=>{
     if(err)
     console.log(err);
+    else if(!user)
+    {
+      req.flash('error',`user doesn't exist`);
+      res.redirect('/login');
+    }
+    else if(!user.login)
+    {
+      req.flash('error','please login');
+      res.redirect('/login');
+    }
     else{
-      accounts.attendance[index].absent = accounts.attendance[index].absent + 1;
-      accounts.save((err)=>{
+      user.attendance[index].absent = user.attendance[index].absent + 1;
+      user.save((err)=>{
         if(err)
           console.log(err);
           else
@@ -425,6 +519,16 @@ app.post('/profile/:id/course',(req,res)=>{
    Account.findOne({_id:id},(err,user)=>{
      if(err)
      console.log(err)
+     else if(!user)
+     {
+       req.flash('error',`user doesn't exist`);
+       res.redirect('/login');
+     }
+     else if(!user.login)
+     {
+       req.flash('error','please login');
+       res.redirect('/login');
+     }
      else{
        let flag=0;
        for(let i=0;i<user.attendance.length;i++){
@@ -452,7 +556,7 @@ app.post('/profile/:id/course',(req,res)=>{
             res.redirect('/profile/'+id);
 
            }
-           
+
          });
        }
      }
@@ -466,6 +570,16 @@ app.get('/delete/:uid/:index',(req,res)=>{
   Account.findOne({_id:uid},(err,user)=>{
     if(err)
     console.log(err);
+    else if(!user)
+    {
+      req.flash('error',`user doesn't exist`);
+      res.redirect('/login');
+    }
+    else if(!user.login)
+    {
+      req.flash('error','please login');
+      res.redirect('/login');
+    }
     else {
       user.attendance.splice(index,index+1);
       user.save((err)=>{
@@ -530,6 +644,16 @@ app.post('/profile/:uid/edit_profile/edit_username' , (req , res)=>{
   Account.findOne({_id:uid} , (err , user)=>{
     if(err)
     console.log(err);
+    else if(!user)
+    {
+      req.flash('error',`user doesn't exist`);
+      res.redirect('/login');
+    }
+    else if(!user.login)
+    {
+      req.flash('error','please login');
+      res.redirect('/login');
+    }
     else{
       let username = req.body.username.trim();
       if(username != user.username && username.length != 0)
@@ -540,7 +664,7 @@ app.post('/profile/:uid/edit_profile/edit_username' , (req , res)=>{
           console.log(err);
           else
           {
-            req.flash('success' , 'Username updated successfully'); 
+            req.flash('success' , 'Username updated successfully');
           }
         })
       }
@@ -564,6 +688,16 @@ app.post('/profile/:uid/edit_profile/edit_password' , (req , res)=>{
   Account.findOne({_id:uid} , (err , user)=>{
     if(err)
     console.log(err);
+    else if(!user)
+    {
+      req.flash('error',`user doesn't exist`);
+      res.redirect('/login');
+    }
+    else if(!user.login)
+    {
+      req.flash('error','please login');
+      res.redirect('/login');
+    }
     else{
       let old_pass = req.body.old_password.trim();
       let new_pass = req.body.new_password.trim();
@@ -576,7 +710,7 @@ app.post('/profile/:uid/edit_profile/edit_password' , (req , res)=>{
       if(new_pass.length > 0 || confirm_pass.length > 0)
       flag[2]++;
 
-      
+
 
       if(flag[0] == 1) //old password entered correctly
       {
@@ -591,7 +725,7 @@ app.post('/profile/:uid/edit_profile/edit_password' , (req , res)=>{
               res.redirect('/profile/'+uid+'/edit_profile');
             }
           })
-          
+
         }
         else{ // new password and confirm password not valid
           req.flash('error' , 'new password and confirm password not matching');
@@ -610,7 +744,7 @@ app.post('/profile/:uid/edit_profile/edit_password' , (req , res)=>{
           res.redirect('/profile/'+uid+'/edit_profile/edit_password');
         }
         else{
-        
+
           res.redirect('/profile/'+uid+'/edit_profile');
         }
 
@@ -619,7 +753,31 @@ app.post('/profile/:uid/edit_profile/edit_password' , (req , res)=>{
   })
 })
 
+app.get('/logout/:uid',(req,res)=>{
+  let uid = req.params.uid;
+  Account.findOne({_id:uid},(err,user)=>{
+    if(err)
+    console.log(err);
+    else if(!user)
+    {
+      req.flash('error',`user doesn't exist`);
+      res.redirect('/login');
+    }
+    else {
+      user.login = 0;
+      user.save(err=>{
+        if(err)
+        console.log(err);
+        else {
+          res.redirect('/login');
+        }
+      })
+    }
+  })
+})
+
 app.listen('3000', (err) => {
+
   if (err)
         console.log(err);
     else
