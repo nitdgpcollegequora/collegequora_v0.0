@@ -41,6 +41,10 @@
                 background-color: #333;
             }
 
+            #hammenu{
+              display: none;
+              cursor: pointer;
+            }
             .tag {
                 background-color: rgb(214, 213, 213);
                 border-radius: 5px;
@@ -48,10 +52,6 @@
 
             .footr {
                 background-color: rgb(50, 107, 24);
-            }
-            #hammenu{
-              display: none;
-              cursor: pointer;
             }
             .cont{
               width: 75%;
@@ -93,6 +93,8 @@
                     </li>
                     <li class="list-group-item border-0 text-center" id="navitem"><a href="/profile/<%=user._id%>"
                             id="navlinkitem"><%= user.username %></a></li>
+                    <li class="list-group-item border-0 text-center" id="navitem"><a href="/home/<%=user._id%>"
+                                      id="navlinkitem">Home</a></li>
                     <li class="list-group-item border-0 text-center" id="navitem"><a href="/question/<%=user._id%>"
                             id="navlinkitem">Write a Question</a></li>
                     <li class="list-group-item border-0 text-center" id="navitem"><a href="/about"

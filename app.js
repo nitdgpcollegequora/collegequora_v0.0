@@ -70,7 +70,18 @@ app.get('/home/:id', (req, res) => {
 
 app.get('/question/:uid', (req, res) => {
     let uid = req.params.uid;
-    res.render('question',{uid:uid,error:req.flash('error')});
+    Account.findOne({_id:uid},(err,user)=>{
+      if(err)
+      console.log(err);
+      else if(!user)
+      {
+        req.flash('error',`user doesn't exist`);
+        res.redirect('/login');
+      }
+      else {
+        res.render('question',{user:user,error:req.flash('error')});
+      }
+    })
 });
 
 app.post('/question/:uid', (req, res) => {
@@ -165,7 +176,7 @@ app.post('/login', (req, res) => {
               console.log(err);
               else {
                 req.flash('success',`welcome ${username}`);
-                res.redirect('/home/'+id);
+                res.redirect('/home/'+user._id);
               }
             })
           }
@@ -227,6 +238,7 @@ app.post('/register', (req, res) =>{
                       account.password = hashedpassword;
                       account.otp = 0 ;
                       account.login = 1;
+                      account.no_ques = 0;
                       account.save(err=>{
                         if(err)
                         console.log(err);
