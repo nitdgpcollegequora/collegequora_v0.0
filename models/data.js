@@ -9,6 +9,9 @@ let dataschema = mongoose.Schema({
     },
     uid:{
         type : String
+    },
+    no_ques:{
+      type : Number
     }
 });
 

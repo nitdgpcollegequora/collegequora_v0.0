@@ -7,6 +7,35 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
+    #navitem {
+        background-color: transparent;
+    }
+
+    #navlinkitem {
+        text-decoration: none;
+        color: white;
+        font-weight: bold;
+        font-size: 20px;
+    }
+
+    .fa-globe {
+        font-size: xx-large;
+    }
+    .links{
+      height: auto;
+    }
+    .headr {
+        width: 100%;
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        background-color: #333;
+    }
+
+    #hammenu{
+      display: none;
+      cursor: pointer;
+    }
         .subject{
             width: 30%;
             margin-bottom: 0px;
@@ -22,6 +51,18 @@
             textarea{
                 width: 99%;
             }
+        }
+        @media screen and (max-width:768px) {
+          .showlinks{
+            display:none;
+            /* height: 100px; */
+          }
+          #hammenu{
+            display: block;
+          }
+          .cont{
+            width: 100%;
+          }
         }
     </style>
 
@@ -71,13 +112,46 @@
     </script>
 </head>
 <body class="pl-0">
+  <!-- navber -->
+
+  <div class="navbar  container-fluid flex-xl-row flex-column headr">
+    <div class=" ml-md-3">
+      <a href="#" style="text-decoration: none;color: white;"><i class="fa fa-globe navbar-brand"></i></a>
+    </div>
+    <div class="position-absolute btn" id="hammenu" style="right:30px;font-size:30px;color:white;">
+      <i class="fa fa-bars"></i>
+    </div>
+    <div class="links showlinks">
+      <ul class="list-group flex-md-row flex-column" style="background-color: transparent;">
+        <li class="list-group-item border-0" id="navitem">
+          <div class="input-group"><input type="text" class="form-control" placeholder="type something">
+            <div class="input-group-append"><span
+              class="input-group-text btn btn-primary font-weight-bold"><i
+              class="fa fa-search"></i></span></div>
+            </div>
+          </li>
+          <li class="list-group-item border-0 text-center" id="navitem"><a href="/profile/<%=user._id%>"
+            id="navlinkitem"><%= user.username %></a></li>
+            <li class="list-group-item border-0 text-center" id="navitem"><a href="/home/<%=user._id%>"
+                              id="navlinkitem">Home</a></li>
+            <li class="list-group-item border-0 text-center" id="navitem"><a href="/question/<%=user._id%>"
+              id="navlinkitem">Write a Question</a></li>
+              <li class="list-group-item border-0 text-center" id="navitem"><a href="/about"
+                id="navlinkitem">About Us</a></li>
+                <li class="list-group-item border-0 text-center" id="navitem"><a href="/contact"
+                  id="navlinkitem">Contact Us</a></li>
+                  <li class="list-group-item border-0 text-center" id="navitem"><a href="/logout/<%=user._id%>"
+                    id="navlinkitem">Log Out</a></li>
+                  </ul>
+                </div>
+              </div>
     <div class="container-md  mt-4 ">
         <div class="card border border-primary ">
             <div class="card-header">
                 <h3>Edit : </h3>
             </div>
             <div class="card-body">
-                
+
                 <form onsubmit="return validate();" method="POST" action="/edit_question/<%= data._id %>/<%=user._id%>/<%=loc%>">
 
                     <div class="form-group">
@@ -103,5 +177,12 @@
             </div>
         </div>
     </div>
+    <script type="text/javascript">
+      let hammenu = document.getElementById('hammenu');
+      let links = document.querySelector('.links');
+      hammenu.addEventListener('click',function(){
+        links.classList.toggle('showlinks');
+      });
+    </script>
 </body>
 </html>
