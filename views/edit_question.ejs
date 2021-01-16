@@ -77,7 +77,8 @@
                 <h3>Edit : </h3>
             </div>
             <div class="card-body">
-                <form onsubmit="return validate();" method="POST" action="/edit_question/<%= data._id %>/<%=user._id%>">
+                
+                <form onsubmit="return validate();" method="POST" action="/edit_question/<%= data._id %>/<%=user._id%>/<%=loc%>">
 
                     <div class="form-group">
                         <div class = "" id="code">

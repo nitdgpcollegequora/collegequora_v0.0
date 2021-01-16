@@ -93,13 +93,13 @@
                     </li>
                     <li class="list-group-item border-0 text-center" id="navitem"><a href="/profile/<%=user._id%>"
                             id="navlinkitem"><%= user.username %></a></li>
-                    <li class="list-group-item border-0 text-center" id="navitem"><a href="/question/<%=user._id%>"
-                            id="navlinkitem">Write a Question</a></li>
+                    <li class="list-group-item border-0 text-center" id="navitem"><a href="/home/<%=user._id%>"
+                            id="navlinkitem">Home</a></li>
                     <li class="list-group-item border-0 text-center" id="navitem"><a href="/about"
                             id="navlinkitem">About Us</a></li>
                     <li class="list-group-item border-0 text-center" id="navitem"><a href="/contact"
                             id="navlinkitem">Contact Us</a></li>
-                    <li class="list-group-item border-0 text-center" id="navitem"><a href="/logout/<%=user._id%>"
+                    <li class="list-group-item border-0 text-center" id="navitem"><a href="/login"
                               id="navlinkitem">Log Out</a></li>
                 </ul>
             </div>
@@ -108,14 +108,14 @@
         <!-- body -->
 
         <div class="container-md container-fluid cont">
+            <%let loc = 1; %>
             <%if(success.length){ %>
               <%success.forEach(function(msg){%>
-              <div class="alert alert-success text-center">
+              <div class="alert alert-success">
                 <%= msg %>
               </div>
               <%})%>
             <%}%>
-            <% let loc = 0; %>
             <% datas.reverse(); %>
             <% datas.forEach(function(dt){ %>
             <div class="card my-3 shadow-lg p-md-3  w-100">
@@ -128,7 +128,7 @@
                         <li class="list-group-item border-0 tag mr-md-2 mb-2"><a href="#"
                                 style="text-decoration: none;color: black;"><%=dt.name%></a></li>
                     </ul>
-                    <% if(user._id == dt.uid){ %>
+                    <!-- <% if(user._id == dt.uid){ %> -->
                     <ul class="list-group flex-row">
                         <a class=" btn  list-group-item mr-1 border-0" href="/edit_question/<%= dt._id %>/<%=user._id%>/<%=loc%>"> <i class="fa fa-pencil mt-1" style="font-size: 24px; color:rgb(50, 93, 122)"></i> </a>
                         <a class=" btn  list-group-item border-0" href="/delete_question/<%= dt._id %>/<%=user._id%>/<%=loc%>"> <i class="fa fa-trash mt-1" style="font-size: 24px; color:red"></i> </a>
@@ -137,7 +137,7 @@
                         
 
                     </ul>
-                    <% } %>
+                    <!-- <% } %> -->
                     
                     
 
