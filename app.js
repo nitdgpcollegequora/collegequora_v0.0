@@ -44,9 +44,7 @@ app.get('/' , (req,res)=>{
   res.render('landing');
 });
 
-// app.get('/profile' , (req , res)=>{
-//   res.render('profile');
-// })
+
 
 app.get('/home/:id', (req, res) => {
   let id =req.params.id;
@@ -375,8 +373,8 @@ app.post('/edit_question/:qid/:uid/:loc' , (req , res)=>{
       else {
         let Data = new data;
         Data = {
-          name : subjectcode.trim() ,
-          content : problem.trim()
+            name : subjectcode.trim() ,
+            content : problem.trim()
         };
 
         data.updateOne({_id:qid} , Data , (err)=>{
@@ -389,8 +387,6 @@ app.post('/edit_question/:qid/:uid/:loc' , (req , res)=>{
             res.redirect('/profile/'+uid+'/My_questions');
           }
         })
-      }
-    })
 })
 
 app.get('/delete_question/:qid/:uid/:loc', (req , res)=>{
@@ -740,6 +736,11 @@ app.post('/profile/:uid/edit_profile/edit_password' , (req , res)=>{
         if(flag[2] == 1)
         {
           req.flash('error' , 'old password wrong');
+          res.redirect('/profile/'+uid+'/edit_profile/edit_password');
+        }
+        else if(old_pass.length > 0 && flag[2] == 0)
+        {
+          req.flash('error' , 'old password wrong and new password and confirm password not valid');
           res.redirect('/profile/'+uid+'/edit_profile/edit_password');
         }
         else{

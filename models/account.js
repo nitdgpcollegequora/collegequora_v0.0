@@ -30,7 +30,7 @@ let accountschema = mongoose.Schema({
         type:Number
     },
     login:{
-      type : Number
+        type:Number
     },
     attendance:[student_attendance]
 });
