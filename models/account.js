@@ -29,6 +29,9 @@ let accountschema = mongoose.Schema({
     no_ques:{
         type:Number
     },
+    login:{
+      type : Number
+    },
     attendance:[student_attendance]
 });
 

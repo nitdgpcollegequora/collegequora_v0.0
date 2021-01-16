@@ -25,6 +25,13 @@
             <div class="w-100 text-center mt-3">
                 <h2 class="font-weight-bold">Register</h2>
             </div>
+            <%if(error){%>
+              <%error.forEach(function(err){%>
+                <div class="alert alert-danger text-center">
+                  <%=err%>
+                </div>
+              <%})%>
+            <%}%>
             <form method="POST" action="/register" class="m-auto" id="regform">
                 <div class="form-group">
 

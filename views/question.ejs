@@ -28,6 +28,13 @@
 </head>
 <body>
     <div class="container-md container-fluid mt-4">
+      <%if(error){%>
+        <%error.forEach(function(err){%>
+          <div class="alert alert-danger text-center">
+            <%=err%>
+          </div>
+        <%})%>
+      <%}%>
         <form method="POST" action="/question/<%=uid%>">
         <div class="form-group">
             <label class="font-weight-bold">Subject code</label>
