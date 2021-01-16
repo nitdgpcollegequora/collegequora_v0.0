@@ -6,6 +6,8 @@ const random = require('random');
 const session = require('express-session');
 const flash = require('connect-flash');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+
 const app = express();
 app.set('view engine', 'ejs');
 
@@ -175,6 +177,9 @@ app.post('/login', (req, res) => {
               if(err)
               console.log(err);
               else {
+                // jwt.sign({user:user},'secretkey',(err,token)=>{
+                //
+                // })
                 req.flash('success',`welcome ${username}`);
                 res.redirect('/home/'+user._id);
               }
