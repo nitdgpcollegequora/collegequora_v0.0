@@ -57,6 +57,37 @@
 
 <body>
     <div class="container-lg container-fluid border border-primary mt-3">
+      <!-- navber -->
+
+      <div class="navbar  container-fluid flex-xl-row flex-column headr">
+          <div class=" ml-md-3">
+              <a href="#" style="text-decoration: none;color: white;"><i class="fa fa-globe navbar-brand"></i></a>
+          </div>
+          <div class="position-absolute btn" id="hammenu" style="right:30px;font-size:30px;color:white;">
+            <i class="fa fa-bars"></i>
+          </div>
+          <div class="links showlinks">
+              <ul class="list-group flex-md-row flex-column" style="background-color: transparent;">
+                  <li class="list-group-item border-0" id="navitem">
+                      <div class="input-group"><input type="text" class="form-control" placeholder="type something">
+                          <div class="input-group-append"><span
+                                  class="input-group-text btn btn-primary font-weight-bold"><i
+                                      class="fa fa-search"></i></span></div>
+                      </div>
+                  </li>
+                  <li class="list-group-item border-0 text-center" id="navitem"><a href="/profile/<%=user._id%>"
+                          id="navlinkitem"><%= user.username %></a></li>
+                  <li class="list-group-item border-0 text-center" id="navitem"><a href="/question/<%=user._id%>"
+                          id="navlinkitem">Write a Question</a></li>
+                  <li class="list-group-item border-0 text-center" id="navitem"><a href="/about"
+                          id="navlinkitem">About Us</a></li>
+                  <li class="list-group-item border-0 text-center" id="navitem"><a href="/contact"
+                          id="navlinkitem">Contact Us</a></li>
+                  <li class="list-group-item border-0 text-center" id="navitem"><a href="/logout/<%=user._id%>"
+                            id="navlinkitem">Log Out</a></li>
+              </ul>
+          </div>
+      </div>
         <% if(success.length){ %>
             <% success.forEach(function(s){%>
                 <div class="alert alert-success text-center w-100">
@@ -124,5 +155,12 @@
         </div>
 
     </div>
+    <script type="text/javascript">
+      let hammenu = document.getElementById('hammenu');
+      let links = document.querySelector('.links');
+      hammenu.addEventListener('click',function(){
+        links.classList.toggle('showlinks');
+      });
+    </script>
 </body>
 </html>

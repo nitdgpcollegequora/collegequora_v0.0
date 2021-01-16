@@ -29,7 +29,7 @@
         .password{
             width: 95%;
             display: inline;
-            
+
         }
 
         @media screen and (max-width: 768px) {
@@ -37,20 +37,20 @@
                 display: none;
                 background-color: tomato;
             }
-            
+
             .profile_pic{
                 text-align: center;
             }
         }
 
         @media screen and (max-width: 577px) {
-            
+
             *{
                 font-size: small;
             }
 
-            
-            
+
+
         }
     </style>
 
@@ -79,7 +79,7 @@
             eye.setAttribute('title' , 'hide password');
             else
             eye.setAttribute('title' , 'show password');
-            
+
             eye.classList.toggle('fa-eye-slash');
         }
 
@@ -88,35 +88,65 @@
 
 <body>
     <div class="container-lg container-fluid border border-primary mt-3">
-        
+      <!-- navber -->
+
+      <div class="navbar  container-fluid flex-xl-row flex-column headr">
+          <div class=" ml-md-3">
+              <a href="#" style="text-decoration: none;color: white;"><i class="fa fa-globe navbar-brand"></i></a>
+          </div>
+          <div class="position-absolute btn" id="hammenu" style="right:30px;font-size:30px;color:white;">
+            <i class="fa fa-bars"></i>
+          </div>
+          <div class="links showlinks">
+              <ul class="list-group flex-md-row flex-column" style="background-color: transparent;">
+                  <li class="list-group-item border-0" id="navitem">
+                      <div class="input-group"><input type="text" class="form-control" placeholder="type something">
+                          <div class="input-group-append"><span
+                                  class="input-group-text btn btn-primary font-weight-bold"><i
+                                      class="fa fa-search"></i></span></div>
+                      </div>
+                  </li>
+                  <li class="list-group-item border-0 text-center" id="navitem"><a href="/profile/<%=user._id%>"
+                          id="navlinkitem"><%= user.username %></a></li>
+                  <li class="list-group-item border-0 text-center" id="navitem"><a href="/question/<%=user._id%>"
+                          id="navlinkitem">Write a Question</a></li>
+                  <li class="list-group-item border-0 text-center" id="navitem"><a href="/about"
+                          id="navlinkitem">About Us</a></li>
+                  <li class="list-group-item border-0 text-center" id="navitem"><a href="/contact"
+                          id="navlinkitem">Contact Us</a></li>
+                  <li class="list-group-item border-0 text-center" id="navitem"><a href="/logout/<%=user._id%>"
+                            id="navlinkitem">Log Out</a></li>
+              </ul>
+          </div>
+      </div>
         <div class="mt-3">
             <div class="row">
-                
+
                 <div class="col-sm-6 col-12 w-100 profile_pic text-center">
                     <img   src="https://image.freepik.com/free-icon/important-person_318-10744.jpg" class="rounded-circle" alt="" style="width: 100px;height: 100px; background-color: turquoise;">
                 </div>
                 <div class="col-sm-4 w-100 details" >
                     <div class="row">
                         <div class="col-sm-12 col-6" style="font-size: 22px;font-weight: 700;" ><%= user.username %></div>
-                    
-                    
+
+
                         <div class="col-sm-12 col-5 m-2 p-1 "  style="font-weight: 500;"><%= user.email %></div>
-                        
-                    
-                    
+
+
+
                         <div class="col-md-12 col-12 m-1 text-left"  style="font-weight: 500;"><%= user.no_ques %>   questions  </div>
-                        
-                        
+
+
                     </div>
 
                 </div>
             </div>
             <hr>
         </div>
-        
+
         <div>
             <h4 class="font-weight-bold text-center">Edit Profile</h4>
-            
+
 
             <ol>
                 <li>
@@ -125,17 +155,17 @@
                     </div>
                     <br>
                     <form action="/profile/<%=user._id%>/edit_profile/edit_username" method="POST" >
-                        
+
                         <div class="form-group">
                             <label for="username">Edit name:</label>
                             <input class="form-control" type="text" id="username" name="username" value="<%=user.username%>">
                         </div>
-                        
+
                         <div class="form-group">
                             <button class="btn btn-success" type="submit">Save</button>
                         </div>
-        
-                        
+
+
                     </form>
                     <hr>
                 </li>
@@ -152,7 +182,14 @@
                 </li>
             </ol>
         </div>
-        
-    </div>    
+
+    </div>
+    <script type="text/javascript">
+      let hammenu = document.getElementById('hammenu');
+      let links = document.querySelector('.links');
+      hammenu.addEventListener('click',function(){
+        links.classList.toggle('showlinks');
+      });
+    </script>
 </body>
 </html>
