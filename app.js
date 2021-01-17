@@ -45,22 +45,112 @@ app.get('/profile' , (req , res)=>{
   res.render('profile');
 })
 
-app.get('/home/:id', (req, res) => {
+app.get('/home/:id/:page', (req, res) => {
   let id =req.params.id;
   Account.findOne({_id:id},(err,user)=>{
     if(err)
     console.log(err);
     else {
-      data.find({}, function (err, datas) {
+      const datas = paginatedResults(data, req);
+      console.log(datas);
+      console.log(11);
+      console.log(typeof(datas));
+      res.render('index', {datas: datas,user:user,success:req.flash('success')});
+      /*data.find({skip: }, function (err, datas) {
           if (err)
               console.log(err);
           else {
-              res.render('index', {datas: datas,user:user,success:req.flash('success')});
+            const results = paginatedResults(datas, req);
+            console.log(results);
+            console.log(typeof(results));
+            res.render('index', {datas: results, user:user, success:req.flash('success')});
           }
-      })
+      });*/
     }
   })
 });
+
+
+const users = [
+  {id: 1, name: 'User 1'},
+  {id: 2, name: 'User 2'},
+  {id: 3, name: 'User 3'},
+  {id: 4, name: 'User 4'},
+  {id: 5, name: 'User 5'},
+  {id: 6, name: 'User 6'},
+  {id: 7, name: 'User 7'},
+  {id: 8, name: 'User 8'},
+  {id: 9, name: 'User 9'},
+  {id: 10, name: 'User 10'},
+  {id: 11, name: 'User 11'},
+  {id: 12, name: 'User 12'},
+  {id: 13, name: 'User 13'}
+];
+
+/*app.get('/users', (req, res) =>{
+  //results = paginatedResults(users, req);
+  res.json(results);
+});*/
+
+
+function paginatedResults(model, req){
+  const page = parseInt(req.params.page);
+  //const limit = parseInt(req.query.limit);
+  const limit = 10;
+
+  const startIndex = (page-1)*limit;
+  const endIndex = page*limit;
+
+  result = {};
+  result.next = {
+    page: page+1,
+    limit: limit,
+    check: false
+  };
+  if(endIndex < users.length){
+    result.next.check = true;
+  }
+  result.previous = {
+    page: page-1,
+    limit: limit,
+    check: false
+  };
+  if(startIndex > 0){
+    result.previous.check = true;
+  }
+  //results.results = users.slice(startIndex, endIndex);
+  //results.results = model.limit(limit).skip(startIndex).exec();
+
+  model.find({}, {skip:startIndex, limit:limit}, async (err, datas) => {
+    if(err){
+      console.log(111);
+      console.log(err);
+      result.results = {};
+    }else{
+      result.results = datas;
+    }
+  });
+  return result;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 app.get('/question/:uid', (req, res) => {
     let uid = req.params.uid;
@@ -114,7 +204,7 @@ app.post('/login', (req, res) => {
             else{
               if(accounts)
               {
-                res.redirect('/home/'+accounts._id);
+                res.redirect('/home/'+accounts._id+'/'+1);
               }
               else {
                 res.redirect('/login');
