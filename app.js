@@ -7,11 +7,14 @@ const session = require('express-session');
 const flash = require('connect-flash');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const cookie = require('cookie-parser');
+
 
 const app = express();
 app.set('view engine', 'ejs');
 
 app.use(bodyParser.urlencoded({ extended: false }))
+app.use(cookie());
 
 app.use(session({
   secret: 'keyboard cat',
@@ -44,29 +47,29 @@ app.get('/' , (req,res)=>{
   res.render('landing');
 });
 
-
-
-app.get('/home/:id', (req, res) => {
-  let id =req.params.id;
-  Account.findOne({_id:id},(err,user)=>{
-    if(err)
-    console.log(err);
-    else if(!user)
-    {
-      req.flash('error',`user don't exist`);
-      res.redirect('/login');
-    }
-    else {
-      data.find({}, function (err, datas) {
-          if (err)
-              console.log(err);
-          else {
-              res.render('index', {datas: datas,user:user,success:req.flash('success')});
-          }
-      })
-    }
-  })
-});
+function verifyuser(req,res,next){
+  const bearertoken = req.cookies.jwt;
+  console.log(bearertoken);
+  if(!bearertoken)
+  {
+    req.flash('error','please login');
+    res.redirect('/login');
+  }
+  else {
+    jwt.verify(bearertoken,'secretkey',(err,decoded)=>{
+        if(err)
+        {
+          console.log(err);
+          req.flash('error','please login');
+          res.redirect('/login');
+        }
+        else {
+          req.user = decoded.user;
+          next();
+        }
+    });
+  }
+};
 
 app.get('/question/:uid', (req, res) => {
     let uid = req.params.uid;
@@ -84,7 +87,7 @@ app.get('/question/:uid', (req, res) => {
     })
 });
 
-app.post('/question/:uid', (req, res) => {
+app.post('/question/:uid',verifyuser, (req, res) => {
   let uid = req.params.uid;
   Account.findOne({_id:uid},(err,user)=>{
     if(err)
@@ -94,9 +97,9 @@ app.post('/question/:uid', (req, res) => {
       req.flash('error',`user don't exist`);
       res.redirect('/login');
     }
-    else if(!user.login)
+    else if(!user.login || req.user!=user.username)
     {
-      req.flash('error','please log in');
+      req.flash('error','please log in2');
       res.redirect('/login');
     }
     else {
@@ -148,7 +151,27 @@ app.get('/contact', (req, res) => {
     res.render('contact');
 });
 
-
+app.get('/home/:uid',(req,res)=>{
+  let uid = req.params.uid;
+  Account.findOne({_id:uid},(err,user)=>{
+    if(err)
+    console.log(err);
+    else if(!user)
+    {
+      req.flash('error',`user doesn't exist`);
+      res.redirect('/login');
+    }
+    else {
+      data.find({},(err,datas)=>{
+        if(err)
+        console.log(err);
+        else {
+          res.render('index',{success:req.flash('success'),datas:datas,user:user});
+        }
+      })
+    }
+  })
+})
 
 
 
@@ -173,19 +196,22 @@ app.post('/login', (req, res) => {
             user.login=1;
             user.save(err=>{
               if(err)
-              console.log(err);
+              {
+                console.log('hello'+err);
+              }
+              // console.log(err);
               else {
-                // jwt.sign({user:user},'secretkey',(err,token)=>{
-                //
-                // })
-                req.flash('success',`welcome ${username}`);
-                res.redirect('/home/'+user._id);
+                const token = jwt.sign({user:user.username},'secretkey')
+                  console.log(token);
+                  res.cookie('jwt',token,{maxAge:21600000,httpOnly:true});
+                      req.flash('success',`welcome ${username}`);
+                      res.redirect('/home/'+user._id);
               }
             })
           }
           else {
             req.flash('error','incorrect password');
-            res.redirect('/login');
+            res.redirect('/login')
           }
       }
     })
@@ -246,8 +272,8 @@ app.post('/register', (req, res) =>{
                         if(err)
                         console.log(err);
                         else {
-                          req.flash('success',`welcome ${username}`);
-                          res.redirect('/home/'+account._id);
+                          // req.flash('success',`welcome ${username}`);
+                          res.redirect('/login');
                         }
                       })
                     }
@@ -356,7 +382,7 @@ app.get('/edit_question/:qid/:uid/:loc' , (req , res)=>{
     })
 });
 
-app.post('/edit_question/:qid/:uid/:loc' , (req , res)=>{
+app.post('/edit_question/:qid/:uid/:loc' ,verifyuser, (req , res)=>{
     let qid = req.params.qid;
     let subjectcode =req.body.subjectcode;
     let problem = req.body.problem;
@@ -368,6 +394,11 @@ app.post('/edit_question/:qid/:uid/:loc' , (req , res)=>{
       else if(!user)
       {
         req.flash('error',`user doesn't exist`);
+        res.redirect('/login');
+      }
+      else if(!user.login || req.user != user.username)
+      {
+        req.flash('error','please login');
         res.redirect('/login');
       }
       else {
@@ -387,9 +418,11 @@ app.post('/edit_question/:qid/:uid/:loc' , (req , res)=>{
             res.redirect('/profile/'+uid+'/My_questions');
           }
         })
+      }
+})
 })
 
-app.get('/delete_question/:qid/:uid/:loc', (req , res)=>{
+app.get('/delete_question/:qid/:uid/:loc',verifyuser, (req , res)=>{
   let qid = req.params.qid;
   let uid = req.params.uid;
   let loc = req.params.loc;
@@ -404,7 +437,7 @@ app.get('/delete_question/:qid/:uid/:loc', (req , res)=>{
           req.flash('error',`user doesn't exist`);
           res.redirect('/login');
         }
-        else if(!user.login)
+        else if(!user.login || req.user!=user.username)
         {
           req.flash('error','please login');
           res.redirect('login');
@@ -429,7 +462,7 @@ app.get('/delete_question/:qid/:uid/:loc', (req , res)=>{
   });
 });
 
-app.get('/present/:id/:index',(req ,res)=>{
+app.get('/present/:id/:index',verifyuser,(req ,res)=>{
   let id =req.params.id;
   let index = req.params.index;
   Account.findOne({_id:id} , (err , user)=>{
@@ -440,7 +473,7 @@ app.get('/present/:id/:index',(req ,res)=>{
       req.flash('error',`user doesn't exist`);
       res.redirect('/login');
     }
-    else if(!user.login)
+    else if(!user.login || req.user != user.username)
     {
       req.flash('error','please login');
       res.redirect('/login');
@@ -463,7 +496,7 @@ app.get('/present/:id/:index',(req ,res)=>{
   });
 })
 
-app.get('/absent/:id/:index',(req ,res)=>{
+app.get('/absent/:id/:index',verifyuser,(req ,res)=>{
   let id =req.params.id;
   let index = req.params.index;
   Account.findOne({_id:id} , (err , user)=>{
@@ -474,7 +507,7 @@ app.get('/absent/:id/:index',(req ,res)=>{
       req.flash('error',`user doesn't exist`);
       res.redirect('/login');
     }
-    else if(!user.login)
+    else if(!user.login || req.user != user.username)
     {
       req.flash('error','please login');
       res.redirect('/login');
@@ -507,7 +540,7 @@ app.get('/profile/:id',(req,res)=>{
   })
 })
 
-app.post('/profile/:id/course',(req,res)=>{
+app.post('/profile/:id/course',verifyuser,(req,res)=>{
   let coursename = req.body.course;
   let id = req.params.id;
  if(!coursename)
@@ -524,7 +557,7 @@ app.post('/profile/:id/course',(req,res)=>{
        req.flash('error',`user doesn't exist`);
        res.redirect('/login');
      }
-     else if(!user.login)
+     else if(!user.login || req.user != user.username)
      {
        req.flash('error','please login');
        res.redirect('/login');
@@ -564,7 +597,7 @@ app.post('/profile/:id/course',(req,res)=>{
  }
 })
 
-app.get('/delete/:uid/:index',(req,res)=>{
+app.get('/delete/:uid/:index',verifyuser,(req,res)=>{
   let uid = req.params.uid;
   let index = req.params.index;
   Account.findOne({_id:uid},(err,user)=>{
@@ -575,7 +608,7 @@ app.get('/delete/:uid/:index',(req,res)=>{
       req.flash('error',`user doesn't exist`);
       res.redirect('/login');
     }
-    else if(!user.login)
+    else if(!user.login || req.user!=user.username)
     {
       req.flash('error','please login');
       res.redirect('/login');
@@ -639,7 +672,7 @@ app.get('/profile/:uid/edit_profile/edit_username' , (req , res)=>{
 })
 
 
-app.post('/profile/:uid/edit_profile/edit_username' , (req , res)=>{
+app.post('/profile/:uid/edit_profile/edit_username' , verifyuser,(req , res)=>{
   let uid = req.params.uid;
   Account.findOne({_id:uid} , (err , user)=>{
     if(err)
@@ -649,7 +682,7 @@ app.post('/profile/:uid/edit_profile/edit_username' , (req , res)=>{
       req.flash('error',`user doesn't exist`);
       res.redirect('/login');
     }
-    else if(!user.login)
+    else if(!user.login || req.user != user.username)
     {
       req.flash('error','please login');
       res.redirect('/login');
@@ -683,7 +716,7 @@ app.get('/profile/:uid/edit_profile/edit_password' , (req , res)=>{
   })
 })
 
-app.post('/profile/:uid/edit_profile/edit_password' , (req , res)=>{
+app.post('/profile/:uid/edit_profile/edit_password' ,verifyuser, (req , res)=>{
   let uid = req.params.uid;
   Account.findOne({_id:uid} , (err , user)=>{
     if(err)
@@ -693,7 +726,7 @@ app.post('/profile/:uid/edit_profile/edit_password' , (req , res)=>{
       req.flash('error',`user doesn't exist`);
       res.redirect('/login');
     }
-    else if(!user.login)
+    else if(!user.login || req.user != user.username)
     {
       req.flash('error','please login');
       res.redirect('/login');
