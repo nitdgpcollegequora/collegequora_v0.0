@@ -7,11 +7,14 @@ const session = require('express-session');
 const flash = require('connect-flash');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const cookie = require('cookie-parser');
+
 
 const app = express();
 app.set('view engine', 'ejs');
 
 app.use(bodyParser.urlencoded({ extended: false }))
+app.use(cookie());
 
 app.use(session({
   secret: 'keyboard cat',
@@ -45,16 +48,26 @@ app.get('/' , (req,res)=>{
 });
 
 function verifyuser(req,res,next){
-  const bearertoken =  req.header('Authorization').split(' ')[1];
-  const token = jwt.verify(bearertoken,'secretkey');
-  if(!token)
+  const bearertoken = req.cookies.jwt;
+  console.log(bearertoken);
+  if(!bearertoken)
   {
     req.flash('error','please login');
-    return res.redirect('/login');
+    res.redirect('/login');
   }
   else {
-    req.user = token.user;
-    next();
+    jwt.verify(bearertoken,'secretkey',(err,decoded)=>{
+        if(err)
+        {
+          console.log(err);
+          req.flash('error','please login');
+          res.redirect('/login');
+        }
+        else {
+          req.user = decoded.user;
+          next();
+        }
+    });
   }
 };
 
@@ -86,7 +99,7 @@ app.post('/question/:uid',verifyuser, (req, res) => {
     }
     else if(!user.login || req.user!=user.username)
     {
-      req.flash('error','please log in');
+      req.flash('error','please log in2');
       res.redirect('/login');
     }
     else {
@@ -174,7 +187,7 @@ app.post('/login', (req, res) => {
       console.log(err);
       else if(!user)
       {
-        req.flash('error',`user don't exist1`);
+        req.flash('error',`user don't exist`);
         res.redirect('/login');
       }
       else{
@@ -190,7 +203,7 @@ app.post('/login', (req, res) => {
               else {
                 const token = jwt.sign({user:user.username},'secretkey')
                   console.log(token);
-                  res.cookie('jwt',token,{httpOnly:true,expiresIn:"3h"});
+                  res.cookie('jwt',token,{maxAge:21600000,httpOnly:true});
                       req.flash('success',`welcome ${username}`);
                       res.redirect('/home/'+user._id);
               }
@@ -198,7 +211,7 @@ app.post('/login', (req, res) => {
           }
           else {
             req.flash('error','incorrect password');
-            res.redirect('/login');
+            res.redirect('/login')
           }
       }
     })
@@ -409,7 +422,7 @@ app.post('/edit_question/:qid/:uid/:loc' ,verifyuser, (req , res)=>{
 })
 })
 
-app.get('/delete_question/:qid/:uid/:loc', (req , res)=>{
+app.get('/delete_question/:qid/:uid/:loc',verifyuser, (req , res)=>{
   let qid = req.params.qid;
   let uid = req.params.uid;
   let loc = req.params.loc;
@@ -424,7 +437,7 @@ app.get('/delete_question/:qid/:uid/:loc', (req , res)=>{
           req.flash('error',`user doesn't exist`);
           res.redirect('/login');
         }
-        else if(!user.login)
+        else if(!user.login || req.user!=user.username)
         {
           req.flash('error','please login');
           res.redirect('login');
@@ -449,7 +462,7 @@ app.get('/delete_question/:qid/:uid/:loc', (req , res)=>{
   });
 });
 
-app.get('/present/:id/:index',(req ,res)=>{
+app.get('/present/:id/:index',verifyuser,(req ,res)=>{
   let id =req.params.id;
   let index = req.params.index;
   Account.findOne({_id:id} , (err , user)=>{
@@ -460,7 +473,7 @@ app.get('/present/:id/:index',(req ,res)=>{
       req.flash('error',`user doesn't exist`);
       res.redirect('/login');
     }
-    else if(!user.login)
+    else if(!user.login || req.user != user.username)
     {
       req.flash('error','please login');
       res.redirect('/login');
@@ -483,7 +496,7 @@ app.get('/present/:id/:index',(req ,res)=>{
   });
 })
 
-app.get('/absent/:id/:index',(req ,res)=>{
+app.get('/absent/:id/:index',verifyuser,(req ,res)=>{
   let id =req.params.id;
   let index = req.params.index;
   Account.findOne({_id:id} , (err , user)=>{
@@ -494,7 +507,7 @@ app.get('/absent/:id/:index',(req ,res)=>{
       req.flash('error',`user doesn't exist`);
       res.redirect('/login');
     }
-    else if(!user.login)
+    else if(!user.login || req.user != user.username)
     {
       req.flash('error','please login');
       res.redirect('/login');
@@ -584,7 +597,7 @@ app.post('/profile/:id/course',verifyuser,(req,res)=>{
  }
 })
 
-app.get('/delete/:uid/:index',(req,res)=>{
+app.get('/delete/:uid/:index',verifyuser,(req,res)=>{
   let uid = req.params.uid;
   let index = req.params.index;
   Account.findOne({_id:uid},(err,user)=>{
@@ -595,7 +608,7 @@ app.get('/delete/:uid/:index',(req,res)=>{
       req.flash('error',`user doesn't exist`);
       res.redirect('/login');
     }
-    else if(!user.login)
+    else if(!user.login || req.user!=user.username)
     {
       req.flash('error','please login');
       res.redirect('/login');
