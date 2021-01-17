@@ -269,7 +269,8 @@ app.post('/login', (req, res) => {
                 //
                 // })
                 req.flash('success',`welcome ${username}`);
-                res.redirect('/home/'+user._id);
+                //res.redirect('/home/'+user._id);
+                res.redirect('/home/'+accounts._id+'/'+1);
               }
             })
           }
@@ -475,8 +476,10 @@ app.post('/edit_question/:qid/:uid/:loc' , (req , res)=>{
             else
             res.redirect('/profile/'+uid+'/My_questions');
           }
-        })
-})
+        });
+      }
+    });
+});
 
 app.get('/delete_question/:qid/:uid/:loc', (req , res)=>{
   let qid = req.params.qid;
@@ -865,10 +868,10 @@ app.get('/logout/:uid',(req,res)=>{
   })
 })
 
-app.listen('3000', (err) => {
 
+app.listen('3000', (err) => {
   if (err)
         console.log(err);
     else
         console.log(`app listening at 3000`);
-});
+}); 
