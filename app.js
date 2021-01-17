@@ -44,29 +44,19 @@ app.get('/' , (req,res)=>{
   res.render('landing');
 });
 
-
-
-app.get('/home/:id', (req, res) => {
-  let id =req.params.id;
-  Account.findOne({_id:id},(err,user)=>{
-    if(err)
-    console.log(err);
-    else if(!user)
-    {
-      req.flash('error',`user don't exist`);
-      res.redirect('/login');
-    }
-    else {
-      data.find({}, function (err, datas) {
-          if (err)
-              console.log(err);
-          else {
-              res.render('index', {datas: datas,user:user,success:req.flash('success')});
-          }
-      })
-    }
-  })
-});
+function verifyuser(req,res,next){
+  const bearertoken =  req.header('Authorization').split(' ')[1];
+  const token = jwt.verify(bearertoken,'secretkey');
+  if(!token)
+  {
+    req.flash('error','please login');
+    return res.redirect('/login');
+  }
+  else {
+    req.user = token.user;
+    next();
+  }
+};
 
 app.get('/question/:uid', (req, res) => {
     let uid = req.params.uid;
@@ -84,7 +74,7 @@ app.get('/question/:uid', (req, res) => {
     })
 });
 
-app.post('/question/:uid', (req, res) => {
+app.post('/question/:uid',verifyuser, (req, res) => {
   let uid = req.params.uid;
   Account.findOne({_id:uid},(err,user)=>{
     if(err)
@@ -96,8 +86,15 @@ app.post('/question/:uid', (req, res) => {
     }
     else if(!user.login)
     {
-      req.flash('error','please log in');
-      res.redirect('/login');
+      if(req.user == user.username)
+      {
+        req.flash('error','please log in');
+        res.redirect('/login');
+      }
+      else {
+        req.flash('error',`please login`);
+        res.redirect('/login');
+      }
     }
     else {
 
@@ -148,7 +145,27 @@ app.get('/contact', (req, res) => {
     res.render('contact');
 });
 
-
+app.get('/home/:uid',(req,res)=>{
+  let uid = req.params.uid;
+  Account.findOne({_id:uid},(err,user)=>{
+    if(err)
+    console.log(err);
+    else if(!user)
+    {
+      req.flash('error',`user doesn't exist`);
+      res.redirect('/login');
+    }
+    else {
+      data.find({},(err,datas)=>{
+        if(err)
+        console.log(err);
+        else {
+          res.render('index',{success:req.flash('success'),datas:datas,user:user});
+        }
+      })
+    }
+  })
+})
 
 
 
@@ -164,7 +181,7 @@ app.post('/login', (req, res) => {
       console.log(err);
       else if(!user)
       {
-        req.flash('error',`user don't exist`);
+        req.flash('error',`user don't exist1`);
         res.redirect('/login');
       }
       else{
@@ -173,13 +190,16 @@ app.post('/login', (req, res) => {
             user.login=1;
             user.save(err=>{
               if(err)
-              console.log(err);
+              {
+                console.log('hello'+err);
+              }
+              // console.log(err);
               else {
-                // jwt.sign({user:user},'secretkey',(err,token)=>{
-                //
-                // })
-                req.flash('success',`welcome ${username}`);
-                res.redirect('/home/'+user._id);
+                const token = jwt.sign({user:user.username},'secretkey')
+                  console.log(token);
+                  res.cookie('jwt',token,{httpOnly:true,expiresIn:"12h"});
+                      req.flash('success',`welcome ${username}`);
+                      res.redirect('/home/'+user._id);
               }
             })
           }
@@ -246,8 +266,8 @@ app.post('/register', (req, res) =>{
                         if(err)
                         console.log(err);
                         else {
-                          req.flash('success',`welcome ${username}`);
-                          res.redirect('/home/'+account._id);
+                          // req.flash('success',`welcome ${username}`);
+                          res.redirect('/login');
                         }
                       })
                     }
@@ -387,6 +407,8 @@ app.post('/edit_question/:qid/:uid/:loc' , (req , res)=>{
             res.redirect('/profile/'+uid+'/My_questions');
           }
         })
+      }
+})
 })
 
 app.get('/delete_question/:qid/:uid/:loc', (req , res)=>{
