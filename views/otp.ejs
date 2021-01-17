@@ -29,6 +29,13 @@
         <div class="w-100 text-center mt-3">
             <h2 class="font-weight-bold name">Enter otp and new Password</h2>
         </div>
+        <%if(error){%>
+          <%error.forEach(function(err){%>
+            <div class="alert alert-danger text-center">
+              <%=err%>
+            </div>
+          <%})%>
+        <%}%>
         <form method="POST" action="/otp" class="m-auto" id="forgotform">
             <div class="form-group" id="setpass1">
                     <label for="otp" class="font-weight-bold">Enter OTP</label>

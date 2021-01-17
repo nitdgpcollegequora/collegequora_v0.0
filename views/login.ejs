@@ -35,10 +35,17 @@
             <div class="w-100 text-center mt-3">
                 <h2 class="font-weight-bold">Login</h2>
             </div>
+            <%if(error.length){%>
+              <%error.forEach(function(err){%>
+                <div class="alert alert-danger text-center">
+                  <%=err%>
+                </div>
+              <%})%>
+            <%}%>
             <form method="POST" action="/login" class="m-auto" id="loginform">
                 <div class="form-group">
-                    <label for="username" class="font-weight-bold">Username</label>
-                    <input type="text" class="form-control" id="username" name="username" placeholder="Username">
+                    <label for="username" class="font-weight-bold">username</label>
+                    <input type="text" class="form-control" id="username" name="username" placeholder="username">
                 </div>
                 <div class="form-group">
                     <label for="password" class="font-weight-bold">Password</label>

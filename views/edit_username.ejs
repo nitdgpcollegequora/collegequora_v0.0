@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src='https://kit.fontawesome.com/a076d05399.js'></script>
+
+
+    <title>Profile Page</title>
+
+    <style>
+    #navitem {
+        background-color: transparent;
+    }
+
+    #navlinkitem {
+        text-decoration: none;
+        color: white;
+        font-weight: bold;
+        font-size: 20px;
+    }
+
+    .fa-globe {
+        font-size: xx-large;
+    }
+    .links{
+      height: auto;
+    }
+    .headr {
+        width: 100%;
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        background-color: #333;
+    }
+
+    #hammenu{
+      display: none;
+      cursor: pointer;
+    }
+        .fa-eye {
+            margin-left: -39px;
+            cursor: pointer;
+            border: none;
+            background-color: white;
+            font-size: 19px;
+        }
+        .form-control{
+            width: 95%;
+        }
+        .password{
+            width: 95%;
+            display: inline;
+
+        }
+
+        @media screen and (max-width: 768px) {
+            .heading{
+                display: none;
+                background-color: tomato;
+            }
+
+            .profile_pic{
+                text-align: center;
+            }
+        }
+
+        @media screen and (max-width: 577px) {
+
+            *{
+                font-size: small;
+            }
+
+
+
+        }
+        @media screen and (max-width:768px) {
+          .showlinks{
+            display:none;
+            /* height: 100px; */
+          }
+          #hammenu{
+            display: block;
+          }
+          .cont{
+            width: 100%;
+          }
+        }
+    </style>
+
+    <script>
+        function tooglepassword(a)
+        {
+            let pass , eye , type , title;
+            if(a == 1)
+            {
+                pass = document.getElementById('old_password');
+                eye = document.getElementById('old_pass');
+            }
+            if(a == 2)
+            {
+                pass = document.getElementById('confirm_password');
+                eye = document.getElementById('confirm_pass');
+            }
+            type = pass.getAttribute('type');
+            if(type == 'password')
+            pass.setAttribute('type' , 'text');
+            else
+            pass.setAttribute('type' , 'password');
+
+            title = eye.getAttribute('title');
+            if(title == 'show password')
+            eye.setAttribute('title' , 'hide password');
+            else
+            eye.setAttribute('title' , 'show password');
+
+            eye.classList.toggle('fa-eye-slash');
+        }
+
+    </script>
+</head>
+
+<body>
+  <!-- navber -->
+
+  <div class="navbar  container-fluid flex-xl-row flex-column headr">
+    <div class=" ml-md-3">
+      <a href="#" style="text-decoration: none;color: white;"><i class="fa fa-globe navbar-brand"></i></a>
+    </div>
+    <div class="position-absolute btn" id="hammenu" style="right:30px;font-size:30px;color:white;">
+      <i class="fa fa-bars"></i>
+    </div>
+    <div class="links showlinks">
+      <ul class="list-group flex-md-row flex-column" style="background-color: transparent;">
+        <li class="list-group-item border-0" id="navitem">
+          <div class="input-group"><input type="text" class="form-control" placeholder="type something">
+            <div class="input-group-append"><span
+              class="input-group-text btn btn-primary font-weight-bold"><i
+              class="fa fa-search"></i></span></div>
+            </div>
+          </li>
+          <li class="list-group-item border-0 text-center" id="navitem"><a href="/profile/<%=user._id%>"
+            id="navlinkitem"><%= user.username %></a></li>
+            <li class="list-group-item border-0 text-center" id="navitem"><a href="/home/<%=user._id%>"
+                              id="navlinkitem">Home</a></li>
+            <li class="list-group-item border-0 text-center" id="navitem"><a href="/question/<%=user._id%>"
+              id="navlinkitem">Write a Question</a></li>
+              <li class="list-group-item border-0 text-center" id="navitem"><a href="/about"
+                id="navlinkitem">About Us</a></li>
+                <li class="list-group-item border-0 text-center" id="navitem"><a href="/contact"
+                  id="navlinkitem">Contact Us</a></li>
+                  <li class="list-group-item border-0 text-center" id="navitem"><a href="/logout/<%=user._id%>"
+                    id="navlinkitem">Log Out</a></li>
+                  </ul>
+                </div>
+              </div>
+    <div class="container-lg container-fluid border border-primary mt-3">
+        <div class="mt-3">
+            <div class="row">
+
+                <div class="col-sm-6 col-12 w-100 profile_pic text-center">
+                    <img   src="https://image.freepik.com/free-icon/important-person_318-10744.jpg" class="rounded-circle" alt="" style="width: 100px;height: 100px; background-color: turquoise;">
+                </div>
+                <div class="col-sm-4 w-100 details" >
+                    <div class="row">
+                        <div class="col-sm-12 col-6" style="font-size: 22px;font-weight: 700;" ><%= user.username %></div>
+
+
+                        <div class="col-sm-12 col-5 m-2 p-1 "  style="font-weight: 500;"><%= user.email %></div>
+
+
+
+                        <div class="col-md-12 col-12 m-1 text-left"  style="font-weight: 500;"><%= user.no_ques %>   questions  </div>
+
+
+                    </div>
+
+                </div>
+            </div>
+            <hr>
+        </div>
+
+        <div>
+            <h4 class="font-weight-bold text-center">Edit Profile</h4>
+
+
+            <ol>
+                <li>
+                    <div>
+                        <a class="btn p-1 " href="/profile/<%=user._id%>/edit_profile/edit_username" style="background-color: rgb(191, 137, 223);">Change username</a>
+                    </div>
+                    <br>
+                    <form action="/profile/<%=user._id%>/edit_profile/edit_username" method="POST" >
+
+                        <div class="form-group">
+                            <label for="username">Edit name:</label>
+                            <input class="form-control" type="text" id="username" name="username" value="<%=user.username%>">
+                        </div>
+
+                        <div class="form-group">
+                            <button class="btn btn-success" type="submit">Save</button>
+                        </div>
+
+
+                    </form>
+                    <hr>
+                </li>
+                <li>
+                    <div>
+                        <a class="btn p-1" href="/profile/<%=user._id%>/edit_profile/edit_password" style="background-color: rgb(191, 137, 223);">Change Password</a>
+                    </div>
+                    <br>
+                </li>
+                <li>
+                    <div>
+                        <a class="btn p-1" href=" " style="background-color: rgb(191, 137, 223);">Change Profile photo</a>
+                    </div>
+                </li>
+            </ol>
+        </div>
+
+    </div>
+    <script type="text/javascript">
+      let hammenu = document.getElementById('hammenu');
+      let links = document.querySelector('.links');
+      hammenu.addEventListener('click',function(){
+        links.classList.toggle('showlinks');
+      });
+    </script>
+</body>
+</html>

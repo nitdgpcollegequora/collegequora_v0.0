@@ -26,6 +26,12 @@ let accountschema = mongoose.Schema({
     otp:{
         type:Number
     },
+    no_ques:{
+        type:Number
+    },
+    login:{
+        type:Number
+    },
     attendance:[student_attendance]
 });
 
