@@ -5,8 +5,16 @@ const nodemailer = require('nodemailer');
 const random = require('random');
 const session = require('express-session');
 const flash = require('connect-flash');
+const path = require('path');
+const crypto = require('crypto');
+const multer = require('multer');
+const GridFsStorage = require('multer-gridfs-storage');
+const Grid = require('gridfs-stream');
+const methodOverride = require('method-override');
+
 const app = express();
 app.set('view engine', 'ejs');
+app.use(methodOverride('_method'));
 
 app.use(bodyParser.urlencoded({ extended: false }))
 
@@ -28,6 +36,10 @@ const data = require('./models/data');
 mongoose.connect('mongodb://localhost/test', { useNewUrlParser: true, useUnifiedTopology: true });
 let db = mongoose.connection;
 
+const mongoURI = 'mongodb://localhost/test';
+const conn = mongoose.createConnection(mongoURI,{ useNewUrlParser: true, useUnifiedTopology: true });
+
+let gfs;
 
 db.once('open', function () {
     console.log('connected');
@@ -40,10 +52,6 @@ db.on('error', function (err) {
 app.get('/' , (req,res)=>{
   res.render('landing');
 });
-
-app.get('/profile' , (req , res)=>{
-  res.render('profile');
-})
 
 app.get('/home/:id', (req, res) => {
   let id =req.params.id;
@@ -315,7 +323,7 @@ app.get('/delete_question/:qid/:uid', (req , res)=>{
   });
 });
 
-app.get('/present/:id/:index',(req ,res)=>{
+app.post('/present/:id/:index',(req ,res)=>{
   let id =req.params.id;
   let index = req.params.index;
   Account.findOne({_id:id} , (err , accounts)=>{
@@ -323,23 +331,11 @@ app.get('/present/:id/:index',(req ,res)=>{
     console.log(err);
     else{
       accounts.attendance[index].present = accounts.attendance[index].present + 1;
-      console.log(accounts.attendance[index]);
-      accounts.save((err)=>{
-        if(err)
-          console.log(err);
-          else
-          {
-            console.log("updated");
-            res.redirect('/profile/'+id);
-          }
-          
-
-      })
     }
   });
 })
 
-app.get('/absent/:id/:index',(req ,res)=>{
+app.post('/absent/:id/:index',(req ,res)=>{
   let id =req.params.id;
   let index = req.params.index;
   Account.findOne({_id:id} , (err , accounts)=>{
@@ -347,18 +343,7 @@ app.get('/absent/:id/:index',(req ,res)=>{
     console.log(err);
     else{
       accounts.attendance[index].absent = accounts.attendance[index].absent + 1;
-      accounts.save((err)=>{
-        if(err)
-          console.log(err);
-          else
-          {
-            console.log("updated");
-            res.redirect('/profile/'+id);
-          }
-        
-    });
-  }
-    
+    }
   });
 })
 
@@ -374,27 +359,71 @@ app.get('/profile/:id',(req,res)=>{
 })
 
 app.post('/profile/:id/course',(req,res)=>{
-  let coursename = req.body.course;
+  let coursename = req.body.coursename;
   let id = req.params.id;
-
-  Account.findOne({_id:id},(err,user)=>{
+  Account.findOne({_id:id},(err,accounts)=>{
     if(err)
     console.log(err)
     else{
       let course = {sub_code: coursename,present: 0,absent: 0}
-      console.log(course);
-      user.attendance.push(course);
-      user.save((err)=>{
-        if(err)
-        console.log(err);
-        else
-        res.redirect('/profile/'+id);
-      });
-      
+      accounts.attendance.push(course)
     }
   });
 })
 
+conn.once('open', () => {
+  // Init stream
+  gfs = Grid(conn.db, mongoose.mongo);
+  gfs.collection('uploads');
+});
+
+// creating a storage to store images 
+
+const storage = new GridFsStorage({
+  url: mongoURI,
+  file: (req, file) => {
+    return new Promise((resolve, reject) => {
+      crypto.randomBytes(16, (err, buf) => {
+        if (err) {
+          return reject(err);
+        }
+        const filename = buf.toString('hex') + path.extname(file.originalname);
+        const fileInfo = {
+          filename: filename,
+          bucketName: 'uploads'
+        };
+        resolve(fileInfo);
+      });
+    });
+  }
+});
+const upload = multer({ storage });
+
+app.post('/question', upload.single('media'), (req, res) => {
+  //res.json({ file: req.media });
+  res.redirect('/');
+});
+
+app.get('/question', (req, res) => {
+  gfs.files.find().toArray((err, files) => {
+    // Check if files
+    if (!files || files.length === 0) {
+      res.render('index', { files: false });
+    } else {
+      files.map(file => {
+        if (
+          file.contentType === 'image/jpeg' ||
+          file.contentType === 'image/png'
+        ) {
+          file.isImage = true;
+        } else {
+          file.isImage = false;
+        }
+      });
+      res.render('index', { files: files });
+    }
+  });
+});
 
 
 app.listen('3000', (err) => {
