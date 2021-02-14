@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+
+    <title>Document</title>
+</head>
+<body>
+    <div class="container-md border border-primary">
+        <div class="font-weight-bolder text-center">
+            <h2>Attandance</h2>
+        </div>
+
+        <form action="/profile/<%= user._id %>/course" method="POST">
+            <div class="form-group">
+                <label for="course">Enter course name : </label>
+                <input type="text" class="form-control" id="course" name="course" placeholder="Enter course name....">
+            </div>
+            <div class="form-group">
+                <button type="submit"  class="btn btn-primary">Add course</button>
+            </div>
+        </form>
+
+        <ul class="list-group flex-column container">
+            <% let i = 0; %>
+            <% user.attendance.forEach(function(att){ %>
+
+                <li class="list-group-item w-100">
+                    <div class="list-group flex-row justify-content-around align-items-center w-100">
+                      <div class="list-group-item border-0"><%= att.sub_code %></div>
+                      <div class="list-group-item border-0"><%= (att.present*100)/(att.present + att.absent) %></div>
+                      <div class="list-group-item border-0">
+                          <button class="btn btn-success font-weight-bold mb-2 mb-md-0"> <a href="/present/<%= user._id %>/<%= i %>" style="text-decoration:none;color:white;">Present</a></button>
+                          <button class="btn btn-danger font-weight-bold"> <a href="/absent/<%= user._id %>/<%= i %>" style="text-decoration:none;color:white">Absent</a></button>
+                      </div>
+                    </div>
+                </li>
+                <% i++; %>
+            <% }) %>
+        </ul>
+    </div>
+</body>
+</html>

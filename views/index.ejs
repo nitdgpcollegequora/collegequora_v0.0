@@ -8,6 +8,8 @@
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
         <style>
+
+
             #navitem {
                 background-color: transparent;
             }
@@ -30,6 +32,7 @@
                 position: sticky;
                 top: 0;
                 z-index: 1;
+                background-color: #333;
             }
 
             .tag {
@@ -66,7 +69,7 @@
 
         <!-- navber -->
 
-        <div class="navbar  container-fluid flex-xl-row flex-column bg-warning headr">
+        <div class="navbar  container-fluid flex-xl-row flex-column headr">
             <div class="logo ml-md-3">
                 <a href="#" style="text-decoration: none;color: white;"><i class="fa fa-globe navbar-brand"></i></a>
             </div>
@@ -82,14 +85,16 @@
                                         class="fa fa-search"></i></span></div>
                         </div>
                     </li>
-                    <li class="list-group-item border-0 text-center" id="navitem"><a href="/login"
-                            id="navlinkitem">Login / Register</a></li>
-                    <li class="list-group-item border-0 text-center" id="navitem"><a href="/question"
+                    <li class="list-group-item border-0 text-center" id="navitem"><a href="/profile/<%=user._id%>"
+                            id="navlinkitem"><%= user.username %></a></li>
+                    <li class="list-group-item border-0 text-center" id="navitem"><a href="/question/<%=user._id%>"
                             id="navlinkitem">Write a Question</a></li>
                     <li class="list-group-item border-0 text-center" id="navitem"><a href="/about"
                             id="navlinkitem">About Us</a></li>
                     <li class="list-group-item border-0 text-center" id="navitem"><a href="/contact"
                             id="navlinkitem">Contact Us</a></li>
+                    <li class="list-group-item border-0 text-center" id="navitem"><a href="/login"
+                              id="navlinkitem">Log Out</a></li>
                 </ul>
             </div>
         </div>
@@ -97,11 +102,18 @@
         <!-- body -->
 
         <div class="container-md container-fluid cont">
+            <%if(success.length){ %>
+              <%success.forEach(function(msg){%>
+              <div class="alert alert-success">
+                <%= msg %>
+              </div>
+              <%})%>
+            <%}%>
             <% datas.reverse(); %>
             <% datas.forEach(function(dt){ %>
             <div class="card my-3 shadow-lg p-md-3 bodyitem w-100">
                 <div class="card-header d-flex flex-xl-row flex-column justify-content-start align-items-center border-0"
-                    style="background-color: rgb(151, 83, 89);color: white;font-weight: bold;">
+                    style="background-color: rgb(50, 93, 122);color: white;font-weight: bold;">
                     <div style="width: 90%;"><%= dt.content %></div>
                                     </div>
                 <div class="card-body border-0 d-flex flex-row justify-content-between align-items-center">
@@ -110,27 +122,23 @@
                                 style="text-decoration: none;color: black;"><%=dt.name%></a></li>
                     </ul>
                     <ul class="list-group flex-row">
-                      <a class=" btn  list-group-item mr-1 border-0" href="/edit_question/<%= dt._id %>"> <i class="fa fa-pencil mt-1" style="font-size: 24px; color:blue"></i> </a>
-                      <a class=" btn  list-group-item border-0" href="/delete_question/<%= dt._id %>"> <i class="fa fa-trash mt-1" style="font-size: 24px; color:red"></i> </a>
+                        <a class=" btn  list-group-item mr-1 border-0" href="/edit_question/<%= dt._id %>/<%=user._id%>"> <i class="fa fa-pencil mt-1" style="font-size: 24px; color:rgb(50, 93, 122)"></i> </a>
+                        <a class=" btn  list-group-item border-0" href="/delete_question/<%= dt._id %>/<%=user._id%>"> <i class="fa fa-trash mt-1" style="font-size: 24px; color:red"></i> </a>
                     </ul>
-
                 </div>
                 <div class="card-footer border-0" >
                     <div class="btn btn-primary font-weight-bold">Write Answer</div>
-
                 </div>
             </div>
             <% }); %>
         </div>
-
         <!-- footer -->
 
         <div
             class="footr container-md container-fluid d-flex flex-md-row flex-column justify-content-around align-items-center">
             <div class="my-3">
                 <ul class="list-group flex-md-row flex-column" style="background-color: transparent;">
-                    <li class="list-group-item border-0 text-center" id="navitem"><a href="/login"
-                            id="navlinkitem">Login / Register</a></li>
+
                     <li class="list-group-item border-0 text-center" id="navitem"><a href="/question"
                             id="navlinkitem">Write a Question</a></li>
                     <li class="list-group-item border-0 text-center" id="navitem"><a href="/about"
@@ -139,9 +147,12 @@
                     <li class="list-group-item border-0 text-center" id="navitem"><a href="/contact"
                             id="navlinkitem">Contact
                             Us</a></li>
+                    <li class="list-group-item border-0 text-center" id="navitem"><a href="/login"
+                              id="navlinkitem">logout</a></li>
                 </ul>
             </div>
         </div>
+<<<<<<< HEAD
 <<<<<<< HEAD
     </div>
     
@@ -153,6 +164,9 @@
 </html>
 =======
         <div class="copyrights container-md container-fluid mt-3 bg-primary text-center">
+=======
+        <div class="copyrights container-md container-fluid mt-3  text-center" style="background-color:#333;">
+>>>>>>> 17eef2e06eccdadc7b4209c3dd10b023e60a7331
             <span><i class="fa fa-copyright mr-2 text-white font-weight-bold"></i><span
                     class="text-white font-weight-bold">College Quora , National Institute of Technology , Durgapur 2020
                 </span></span>
