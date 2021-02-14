@@ -57,21 +57,29 @@ app.get('/home/:id/:page', (req, res) => {
       res.redirect('/login');
     }
     else {
-      const datas = paginatedResults(data, req);
+      /*const datas = paginatedResults(data, req);
       console.log(datas);
       console.log(11);
       console.log(typeof(datas));
-      res.render('index', {datas: datas,user:user,success:req.flash('success')});
-      /*data.find({skip: }, function (err, datas) {
+      res.render('index', {datas: datas,user:user,success:req.flash('success')});*/
+
+      const page = parseInt(req.params.page);
+      //page = parseInt(page);
+      //const limit = parseInt(req.query.limit);
+      const limit = 10;
+
+      const startIndex = (page-1)*limit;
+      const endIndex = page*limit;
+      data.find({}, null, {skip: startIndex, limit: limit}, function (err, datas) {
           if (err)
               console.log(err);
           else {
-            const results = paginatedResults(datas, req);
-            console.log(results);
-            console.log(typeof(results));
-            res.render('index', {datas: results, user:user, success:req.flash('success')});
+            //const results = paginatedResults(datas, req);
+            console.log(datas);
+            console.log(typeof(datas));
+            res.render('index', {datas: datas, user:user, success:req.flash('success'), page:page});
           }
-      });*/
+      });
     }
   })
 });
@@ -97,7 +105,6 @@ const users = [
   //results = paginatedResults(users, req);
   res.json(results);
 });*/
-
 
 function paginatedResults(model, req){
   const page = parseInt(req.params.page);
@@ -127,7 +134,7 @@ function paginatedResults(model, req){
   //results.results = users.slice(startIndex, endIndex);
   //results.results = model.limit(limit).skip(startIndex).exec();
 
-  model.find({}, {skip:startIndex, limit:limit}, async (err, datas) => {
+  model.find({}, {skip:startIndex, limit:limit}, (err, datas) => {
     if(err){
       console.log(111);
       console.log(err);
@@ -186,8 +193,15 @@ app.post('/question/:uid', (req, res) => {
     }
     else if(!user.login)
     {
-      req.flash('error','please log in');
-      res.redirect('/login');
+      if(req.user == user.username)
+      {
+        req.flash('error','please log in');
+        res.redirect('/login');
+      }
+      else {
+        req.flash('error',`please login`);
+        res.redirect('/login');
+      }
     }
     else {
 
@@ -217,7 +231,7 @@ app.post('/question/:uid', (req, res) => {
                   console.log(err);
                   else
                   {
-                    res.redirect('/home/'+uid);
+                    res.redirect('/home/'+uid +'/'+1);
                   }
                 })
               }
@@ -238,7 +252,27 @@ app.get('/contact', (req, res) => {
     res.render('contact');
 });
 
-
+/*app.get('/home/:uid',(req,res)=>{
+  let uid = req.params.uid;
+  Account.findOne({_id:uid},(err,user)=>{
+    if(err)
+    console.log(err);
+    else if(!user)
+    {
+      req.flash('error',`user doesn't exist`);
+      res.redirect('/login');
+    }
+    else {
+      data.find({},(err,datas)=>{
+        if(err)
+        console.log(err);
+        else {
+          res.render('index',{success:req.flash('success'),datas:datas,user:user});
+        }
+      })
+    }
+  })
+})*/
 
 
 
@@ -254,7 +288,7 @@ app.post('/login', (req, res) => {
       console.log(err);
       else if(!user)
       {
-        req.flash('error',`user don't exist`);
+        req.flash('error',`user don't exist1`);
         res.redirect('/login');
       }
       else{
@@ -263,14 +297,17 @@ app.post('/login', (req, res) => {
             user.login=1;
             user.save(err=>{
               if(err)
-              console.log(err);
+              {
+                console.log('hello'+err);
+              }
+              // console.log(err);
               else {
                 // jwt.sign({user:user},'secretkey',(err,token)=>{
                 //
                 // })
                 req.flash('success',`welcome ${username}`);
                 //res.redirect('/home/'+user._id);
-                res.redirect('/home/'+accounts._id+'/'+1);
+                res.redirect('/home/'+user._id+'/'+1);
               }
             })
           }
@@ -337,8 +374,8 @@ app.post('/register', (req, res) =>{
                         if(err)
                         console.log(err);
                         else {
-                          req.flash('success',`welcome ${username}`);
-                          res.redirect('/home/'+account._id);
+                          // req.flash('success',`welcome ${username}`);
+                          res.redirect('/login');
                         }
                       })
                     }
@@ -472,7 +509,7 @@ app.post('/edit_question/:qid/:uid/:loc' , (req , res)=>{
           console.log(err);
           else{
             if(loc == 0)
-            res.redirect('/home/'+uid);
+            res.redirect('/home/'+uid+'/'+1);
             else
             res.redirect('/profile/'+uid+'/My_questions');
           }
@@ -511,7 +548,7 @@ app.get('/delete_question/:qid/:uid/:loc', (req , res)=>{
               if(loc == 1)
               res.redirect('/profile/'+uid+'/My_questions');
               else
-              res.redirect('/home/'+uid);
+              res.redirect('/home/'+uid+'/'+1);
             }
           })
         }
