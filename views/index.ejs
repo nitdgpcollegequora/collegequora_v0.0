@@ -41,6 +41,10 @@
                 background-color: #333;
             }
 
+            #hammenu{
+              display: none;
+              cursor: pointer;
+            }
             .tag {
                 background-color: rgb(214, 213, 213);
                 border-radius: 5px;
@@ -48,10 +52,6 @@
 
             .footr {
                 background-color: rgb(50, 107, 24);
-            }
-            #hammenu{
-              display: none;
-              cursor: pointer;
             }
             .cont{
               width: 75%;
@@ -93,6 +93,8 @@
                     </li>
                     <li class="list-group-item border-0 text-center" id="navitem"><a href="/profile/<%=user._id%>"
                             id="navlinkitem"><%= user.username %></a></li>
+                    <li class="list-group-item border-0 text-center" id="navitem"><a href="/home/<%=user._id%>"
+                                      id="navlinkitem">Home</a></li>
                     <li class="list-group-item border-0 text-center" id="navitem"><a href="/question/<%=user._id%>"
                             id="navlinkitem">Write a Question</a></li>
                     <li class="list-group-item border-0 text-center" id="navitem"><a href="/about"
@@ -134,20 +136,20 @@
                         <a class=" btn  list-group-item border-0" href="/delete_question/<%= dt._id %>/<%=user._id%>/<%=loc%>"> <i class="fa fa-trash mt-1" style="font-size: 24px; color:red"></i> </a>
                         <!-- <a class=" btn  list-group-item border-0" href="#myModal"> <i class="fa fa-trash mt-1" style="font-size: 24px; color:red"></i> </a> -->
 
-                        
+
 
                     </ul>
                     <% } %>
-                    
-                    
+
+
 
                 </div>
                 <div class="card-footer border-0" >
                     <div class="btn btn-primary font-weight-bold">Read more...</div>
                 </div>
             </div>
-            
-            
+
+
 
             <% }); %>
         </div>
