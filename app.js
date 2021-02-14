@@ -203,7 +203,7 @@ app.post('/login', (req, res) => {
               else {
                 const token = jwt.sign({user:user.username},'secretkey')
                   console.log(token);
-                  res.cookie('jwt',token,{maxAge:21600000,httpOnly:true});
+                  res.cookie('jwt',token,{maxAge:3600000,httpOnly:true});
                       req.flash('success',`welcome ${username}`);
                       res.redirect('/home/'+user._id);
               }
