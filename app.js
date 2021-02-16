@@ -29,6 +29,7 @@ app.use(bodyParser.json())
 // importing account and data schema
 const Account = require('./models/account');
 const data = require('./models/data');
+const account = require('./models/account');
 
 // storing all data to a local database test.
 mongoose.connect('mongodb://localhost/test', { useNewUrlParser: true, useUnifiedTopology: true });
@@ -106,8 +107,10 @@ app.post('/question/:uid',verifyuser, (req, res) => {
 
       let Data = new data();
       Data.uid = uid;
+      Data.username = user.username;
       Data.name = req.body.subjectcode;
       Data.content = req.body.problem;
+      Data.comments = [];
       if(!Data.name)
       {
         req.flash('error','please fill subjectcode');
@@ -803,6 +806,147 @@ app.get('/logout/:uid',(req,res)=>{
         console.log(err);
         else {
           res.redirect('/login');
+        }
+      })
+    }
+  })
+})
+
+app.get('/show_more/:dt_id/:uid',(req , res)=>{
+  let qid = req.params.dt_id;
+  let uid = req.params.uid;
+  account.findOne({_id:uid} , (err , user)=>{
+    if(err)
+    console.log(err);
+    else{
+      data.findOne({_id:qid} , (err , data)=>{
+        if(err)
+        console.log(err);
+        else
+        {
+          res.render('show_more' , {data:data , user:user});
+        }
+      })
+    }
+  })
+});
+
+app.get('/user_profile/:uid/:uid1' , (req , res)=>{
+  let uid1 = req.params.uid1;
+  let uid = req.params.uid;
+  account.findOne({_id:uid} , (err , user)=>{
+    if(err)
+    console.log(err);
+    else{
+      account.findOne({username:uid1} , (err , user1)=>{
+        if(err)
+        console.log(err);
+        else
+        {
+          data.find({username:uid1} , (err , data)=>{
+            if(err)
+            console.log(err);
+            else{
+              res.render('user_profile' , {user:user ,  user2:user1 , data:data});
+            }
+          })
+        }
+      })
+    }
+  })
+})
+
+app.post('/question/:qid/:u2name',verifyuser,(req,res)=>{
+  data.findOne({_id:req.params.qid},(err,question)=>{
+    if(err)
+    console.log(err);
+    else if(!question)
+    res.render('/question/'+req.params.qid+'/'+req.params.u1name);
+    else {
+      Account.findOne({username:req.params.u2name},(err,user2)=>{
+        if(err)
+        console.log(err);
+        else if(!user2 || req.user!=user2.username)
+        res.redirect('/login')
+        else {
+              let comment = {
+                to : question.username,
+                from : user2.username,
+                text : req.body.comment
+              };
+              question.comments.push(comment);
+              question.save(err=>{
+                if(err)
+                console.log(err);
+                else {
+                  res.redirect('/home/'+user2._id);
+                }
+              })
+        }
+      })
+    }
+  })
+})
+
+
+app.post('/question/:qid/:u2name/:cindex',verifyuser,(req,res)=>{
+  data.findOne({_id:req.params.qid},(err,question)=>{
+    if(err)
+    console.log(err);
+    else if(!question)
+    res.render('/question/'+req.params.qid+'/'+req.params.u1name);
+    else {
+      Account.findOne({username:req.params.u2name},(err,user2)=>{
+        if(err)
+        console.log(err);
+        else if(!user2 || req.user!=user2.username)
+        res.redirect('/login')
+        else {
+              let reply = {
+                to : question.comments[req.params.cindex].from,
+                from : user2.username,
+                text : req.body.comment
+              };
+              question.comments[req.params.cindex].replies.push(reply);
+              question.save(err=>{
+                if(err)
+                console.log(err);
+                else {
+                  res.redirect('/home/'+user2._id);
+                }
+              })
+        }
+      })
+    }
+  })
+})
+
+app.post('/question/:qid/:u2name/:cindex/:rindex',verifyuser,(req,res)=>{
+  data.findOne({_id:req.params.qid},(err,question)=>{
+    if(err)
+    console.log(err);
+    else if(!question)
+    res.render('/question/'+req.params.qid+'/'+req.params.u1name);
+    else {
+      Account.findOne({username:req.params.u2name},(err,user2)=>{
+        if(err)
+        console.log(err);
+        else if(!user2 || req.user!=user2.username)
+        res.redirect('/login')
+        else {
+              let reply = {
+                to : question.comments[req.params.cindex].replies[req.params.rindex].from,
+                from : user2.username,
+                text : req.body.comment
+              };
+              question.comments[req.params.cindex].replies.push(reply);
+              question.save(err=>{
+                if(err)
+                console.log(err);
+                else {
+                  res.redirect('/home/'+user2._id);
+                }
+              })
         }
       })
     }

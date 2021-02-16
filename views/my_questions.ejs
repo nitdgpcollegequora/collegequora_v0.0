@@ -55,6 +55,7 @@
             }
             .cont{
               width: 75%;
+              
             }
             @media screen and (max-width:768px) {
               .showlinks{
@@ -107,7 +108,8 @@
 
         <!-- body -->
 
-        <div class="container-md container-fluid cont">
+        <div class="container-md container-fluid cont border border-primary mt-2">
+            <div class="text-center"><h3 class="font-weight-bolder">My Questions</h3></div>
             <%let loc = 1; %>
             <%if(success.length){ %>
               <%success.forEach(function(msg){%>
@@ -143,7 +145,7 @@
 
                 </div>
                 <div class="card-footer border-0" >
-                    <div class="btn btn-primary font-weight-bold">Write Answer</div>
+                    <a class="btn btn-primary font-weight-bold" href="/show_more/<%=dt._id %>/<%=user._id%>/">Show more...</a>
                 </div>
             </div>
             
