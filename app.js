@@ -809,7 +809,7 @@ app.get('/logout/:uid',(req,res)=>{
   })
 })
 
-app.get('/question/:qid/:u1name/:u2name',(req,res)=>{
+app.get('/question/:qid/:u2name',(req,res)=>{
   data.findOne({_id:req.params.qid},(err,question)=>{
     if(err)
     console.log(err);
