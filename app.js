@@ -105,7 +105,7 @@ app.post('/question/:uid',verifyuser, (req, res) => {
     else {
 
       let Data = new data();
-      Data.uid = uid;
+      Data.uname = user.username;
       Data.name = req.body.subjectcode;
       Data.content = req.body.problem;
       if(!Data.name)
@@ -807,6 +807,100 @@ app.get('/logout/:uid',(req,res)=>{
       })
     }
   })
+})
+
+app.get('/question/:qid/:u1name/:u2name',(req,res)=>{
+  data.findOne({_id:req.params.qid},(err,question)=>{
+    if(err)
+    console.log(err);
+    else if (!question) {
+      res.redirect('/home/'+req.params.u2name);
+    }
+    else {
+      Account.findOne({username:req.params.u2name},(err,user2)=>{
+        if(err)
+        console.log(err);
+        else if (!user2) {
+          res.redirect('/login');
+        }
+        else {
+          res.render('fullquestion',{error:req.flash('error'),success:req.flash('success'),question:question,user2:user2});
+        }
+      })
+    }
+  })
+})
+
+app.post('/question/:qid/:u1name/:u2name',verifyuser,(req,res)=>{
+    data.findOne({_id:req.params.id},(err,question)=>{
+      if(err)
+      console.log(err);
+      else if(!question)
+      res.render('/question/'+req.params.qid+'/'+req.params.u1name);
+      else {
+        Account.findOne({username:req.params.u2name},(err,user2)=>{
+          if(err)
+          console.log(err);
+          else if(!user2 || req.user!=user2.username)
+          res.redirect('/login')
+          else {
+            Account.findOne({username:req.params.u1name},(err,user1)=>{
+              if(err)
+              console.log(err);
+              else if (!user1) {
+                res.redirect('/home/'+user1._id);
+              }
+              else {
+                question.comments.push(req.body.comment);
+                question.save(err=>{
+                  if(err)
+                  console.log(err);
+                  else {
+                    res.redirect('/question/'+question._id);
+                  }
+                })
+              }
+            })
+          }
+        })
+      }
+    })
+})
+
+app.post('/question/:qid/:u1name/:u2name/:cindex',verifyuser,(req,res)=>{
+    data.findOne({_id:req.params.id},(err,question)=>{
+      if(err)
+      console.log(err);
+      else if(!question)
+      res.render('/question/'+req.params.qid+'/'+req.params.u1name);
+      else {
+        Account.findOne({username:req.params.u2name},(err,user2)=>{
+          if(err)
+          console.log(err);
+          else if(!user2 || req.user!=user2.username)
+          res.redirect('/login')
+          else {
+            Account.findOne({username:req.params.u1name},(err,user1)=>{
+              if(err)
+              console.log(err);
+              else if (!user1) {
+                res.redirect('/home/'+user1._id);
+              }
+              else {
+                question.comments[cindex].replies.push(req.body.reply);
+                question.save(err=>{
+                  if(err)
+                  console.log(err);
+                  else {
+                    res.redirect('/question/'+question._id);
+                  }
+                })
+              }
+            })
+          }
+        })
+      }
+    })
 })
 
 app.listen('3000', (err) => {
