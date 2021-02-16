@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+
+
+    <title>Profile Page</title>
+
+    <style>
+    #navitem {
+        background-color: transparent;
+    }
+
+    #navlinkitem {
+        text-decoration: none;
+        color: white;
+        font-weight: bold;
+        font-size: 20px;
+    }
+
+    .fa-globe {
+        font-size: xx-large;
+    }
+    .links{
+      height: auto;
+    }
+    .headr {
+        width: 100%;
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        background-color: #333;
+    }
+
+    #hammenu{
+      display: none;
+      cursor: pointer;
+    }
+        @media screen and (max-width: 768px) {
+            .heading{
+                display: none;
+                background-color: tomato;
+            }
+
+            .profile_pic{
+                text-align: center;
+            }
+        }
+
+        @media screen and (max-width: 577px) {
+
+            *{
+                font-size: small;
+            }
+
+
+
+        }
+        @media screen and (max-width:768px) {
+          .showlinks{
+            display:none;
+            /* height: 100px; */
+          }
+          #hammenu{
+            display: block;
+          }
+          .cont{
+            width: 100%;
+          }
+        }
+    </style>
+</head>
+
+<body>
+  <div class="navbar  container-fluid flex-xl-row flex-column headr">
+    <div class=" ml-md-3">
+      <a href="#" style="text-decoration: none;color: white;"><i class="fa fa-globe navbar-brand"></i></a>
+    </div>
+    <div class="position-absolute btn" id="hammenu" style="right:30px;font-size:30px;color:white;">
+      <i class="fa fa-bars"></i>
+    </div>
+    <div class="links showlinks">
+      <ul class="list-group flex-md-row flex-column" style="background-color: transparent;">
+        <li class="list-group-item border-0" id="navitem">
+          <div class="input-group"><input type="text" class="form-control" placeholder="type something">
+            <div class="input-group-append"><span
+              class="input-group-text btn btn-primary font-weight-bold"><i
+              class="fa fa-search"></i></span></div>
+            </div>
+          </li>
+          <li class="list-group-item border-0 text-center" id="navitem"><a href="/profile/<%=user._id%>"
+            id="navlinkitem"><%= user.username %></a></li>
+            <li class="list-group-item border-0 text-center" id="navitem"><a href="/home/<%=user._id%>"
+                              id="navlinkitem">Home</a></li>
+            <li class="list-group-item border-0 text-center" id="navitem"><a href="/question/<%=user._id%>"
+              id="navlinkitem">Write a Question</a></li>
+              <li class="list-group-item border-0 text-center" id="navitem"><a href="/about"
+                id="navlinkitem">About Us</a></li>
+                <li class="list-group-item border-0 text-center" id="navitem"><a href="/contact"
+                  id="navlinkitem">Contact Us</a></li>
+                  <li class="list-group-item border-0 text-center" id="navitem"><a href="/logout/<%=user._id%>"
+                    id="navlinkitem">Log Out</a></li>
+                  </ul>
+                </div>
+              </div>
+    <div class="container-lg container-fluid border border-primary mt-3">
+      <div class="card my-3 shadow-lg p-md-3  w-100">
+        <div class="card-header d-flex flex-xl-row flex-column justify-content-start align-items-center border-0"
+            style="background-color: rgb(50, 93, 122);color: white;font-weight: bold;">
+            <div style="width: 90%;"><%= data.content %></div>
+                            </div>
+        <div class="card-body border-0 d-flex flex-row justify-content-between align-items-center">
+            <ul class=" list-group flex-sm-row flex-column">
+                <li class="list-group-item border-0 tag mr-md-2 mb-2"><a href="#"
+                        style="text-decoration: none;color: black;"><%=data.name%></a></li>
+            </ul>
+
+        </div>
+        <hr>
+        <div class="card-footer border-0" >
+            <form action="/question/<%=data._id%>/<%=user.username%>" method="POST">
+              <input type="text" name="comment" class="form-control" placeholder="@<%=data.username%> "> <br>
+              <button class="btn btn-primary font-weight-bold" type="submit">Add Comment</button>
+            </form>
+
+
+        </div>
+      </div>
+      <div>
+        <%for(let i=0 ;i < data.comments.length ; i++){%>
+          <a href="/user_profile/<%=user._id%>/<%=data.comments[i].from%>" class="font-weight-bold" style="text-decoration: none;color:black"><%=data.comments[i].from%> </a>
+          <a href="/user_profile/<%=user._id%>/<%=data.comments[i].to%>" class="font-weight-bold" style="text-decoration: none; color: blue;">@<%=data.comments[i].to%> </a>
+          <%=data.comments[i].text%> 
+          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalc">
+            reply
+          </button>
+          <br>
+
+          <div class="modal fade" id="exampleModalc" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <form action="/question/<%=data._id%>/<%=user.username%>/<%=i%>" method="POST">
+                    <input type="text" name="comment" class="form-control" placeholder="@<%=data.comments[i].from%> "> <br>
+                    <button class="btn btn-primary font-weight-bold" type="submit">Add Comment</button>
+                  </form>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+              </div>
+            </div>
+          </div>
+              <%for(let j=0 ;j < data.comments[i].replies.length ; j++){%>
+                <a href="/user_profile/<%=user._id%>/<%=data.comments[i].replies[j].from%>" class="font-weight-bold" style="text-decoration: none;color:black"><%=data.comments[i].replies[j].from%> </a>
+                <a href="/user_profile/<%=user._id%>/<%=data.comments[i].replies[j].to%>" class="font-weight-bold" style="text-decoration: none; color: blue;">@<%=data.comments[i].replies[j].to%> </a>
+                <%=data.comments[i].replies[j].text%>
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalr">
+                  reply
+                </button>
+
+                <div class="modal fade" id="exampleModalr" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <form action="/question/<%=data._id%>/<%=user.username%>/<%=i%>/<%=j%>" method="POST">
+                          <input type="text" name="comment" class="form-control" placeholder="@<%=data.comments[i].replies[j].from%> "> <br>
+                          <button class="btn btn-primary font-weight-bold" type="submit">Add Comment</button>
+                        </form>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Save changes</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <br>
+                <%}%>
+                <hr>
+          <%}%>
+
+      </div>
+
+      
+
+    </div>
+    <script type="text/javascript">
+      let hammenu = document.getElementById('hammenu');
+      let links = document.querySelector('.links');
+      hammenu.addEventListener('click',function(){
+        links.classList.toggle('showlinks');
+      });
+    </script>
+</body>
+</html>

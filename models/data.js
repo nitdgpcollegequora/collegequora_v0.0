@@ -1,29 +1,31 @@
 let mongoose = require('mongoose');
 
-let reply_schema = mongoose.Schema({
-  u1name : {
-    type : String
-  },
-  u2name : {
-    type : String
-  },
-  text : {
-    type : String
-  }
-})
+// schema for replies
+let reply = mongoose.Schema({
+    to:{
+        type : String
+    },
+    from:{
+        type : String
+    },
+    text:{
+        type : String
+    }
+});
 
-let comment_schema = mongoose.Schema({
-  u1name : {
-    type : String
-  },
-  u2name : {
-    type : String
-  },
-  text : {
-    type : String
-  },
-  replies : [reply_schema]
-})
+// schema for comments
+let comment = mongoose.Schema({
+    to:{
+        type : String
+    },
+    from:{
+        type : String
+    },
+    text:{
+        type : String
+    },
+    replies : [reply]
+});
 
 let dataschema = mongoose.Schema({
     name:{
@@ -32,13 +34,13 @@ let dataschema = mongoose.Schema({
     content:{
         type : String
     },
-    uname:{
+    username:{
         type : String
     },
     no_ques:{
       type : Number
     },
-    comments : [comment_schema]
+    comments : [comment]
 });
 
 let data = module.exports = mongoose.model('data',dataschema);
