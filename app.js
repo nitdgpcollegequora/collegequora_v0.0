@@ -206,7 +206,7 @@ app.post('/login', (req, res) => {
               else {
                 const token = jwt.sign({user:user.username},'secretkey')
                   console.log(token);
-                  res.cookie('jwt',token,{maxAge:3600000,httpOnly:true});
+                  res.cookie('jwt',token,{maxAge:10800000,httpOnly:true});
                       req.flash('success',`welcome ${username}`);
                       res.redirect('/home/'+user._id);
               }
@@ -857,6 +857,7 @@ app.get('/user_profile/:uid/:uid1' , (req , res)=>{
 })
 
 app.post('/question/:qid/:u2name',verifyuser,(req,res)=>{
+  
   data.findOne({_id:req.params.qid},(err,question)=>{
     if(err)
     console.log(err);
@@ -869,19 +870,25 @@ app.post('/question/:qid/:u2name',verifyuser,(req,res)=>{
         else if(!user2 || req.user!=user2.username)
         res.redirect('/login')
         else {
-              let comment = {
-                to : question.username,
-                from : user2.username,
-                text : req.body.comment
-              };
-              question.comments.push(comment);
-              question.save(err=>{
-                if(err)
-                console.log(err);
-                else {
-                  res.redirect('/home/'+user2._id);
-                }
-              })
+          if(req.body.comment.length == 0)
+          res.redirect('/show_more/'+question._id+'/'+user2._id);
+          else{
+            let comment = {
+              to : question.username,
+              from : user2.username,
+              text : req.body.comment
+            };
+            
+            question.comments.push(comment);
+            question.save(err=>{
+              if(err)
+              console.log(err);
+              else {
+                res.redirect('/show_more/'+question._id+'/'+user2._id);
+              }
+            })
+          }
+              
         }
       })
     }
@@ -900,20 +907,24 @@ app.post('/question/:qid/:u2name/:cindex',verifyuser,(req,res)=>{
         else if(!user2 || req.user!=user2.username)
         res.redirect('/login')
         else {
-          console.log(req.params.cindex);
-              let reply = {
-                to : question.comments[req.params.cindex].from,
-                from : user2.username,
-                text : req.body.comment
-              };
-              question.comments[req.params.cindex].replies.push(reply);
-              question.save(err=>{
-                if(err)
-                console.log(err);
-                else {
-                  res.redirect('/home/'+user2._id);
-                }
-              })
+          if(req.body.comment.length == 0)
+          res.redirect('/show_more/'+question._id+'/'+user2._id);
+          else{
+            let reply = {
+              to : question.comments[req.params.cindex].from,
+              from : user2.username,
+              text : req.body.comment
+            };
+            question.comments[req.params.cindex].replies.push(reply);
+            question.save(err=>{
+              if(err)
+              console.log(err);
+              else {
+                res.redirect('/show_more/'+question._id+'/'+user2._id);
+              }
+            })
+          }
+             
         }
       })
     }
@@ -933,19 +944,25 @@ app.post('/question/:qid/:u2name/:cindex/:rindex',verifyuser,(req,res)=>{
         else if(!user2 || req.user!=user2.username)
         res.redirect('/login')
         else {
-              let reply = {
-                to : question.comments[req.params.cindex].replies[req.params.rindex].from,
-                from : user2.username,
-                text : req.body.comment
-              };
-              question.comments[req.params.cindex].replies.push(reply);
-              question.save(err=>{
-                if(err)
-                console.log(err);
-                else {
-                  res.redirect('/home/'+user2._id);
-                }
-              })
+          if(req.body.comment.length == 0)
+          res.redirect('/show_more/'+question._id+'/'+user2._id);
+          else{
+            let reply = {
+              to : question.comments[req.params.cindex].replies[req.params.rindex].from,
+              from : user2.username,
+              text : req.body.comment
+            };
+            question.comments[req.params.cindex].replies.push(reply);
+            question.save(err=>{
+              if(err)
+              console.log(err);
+              else {
+                res.redirect('/show_more/'+question._id+'/'+user2._id);
+              }
+            })
+
+          }
+              
         }
       })
     }
