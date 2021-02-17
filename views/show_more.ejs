@@ -167,7 +167,8 @@
         <hr>
         <div class="card-footer border-0" >
             <form action="/question/<%=data._id%>/<%=user.username%>" method="POST">
-              <input type="text" name="comment" class="form-control" placeholder="@<%=data.username%> "> <br>
+              <label  class="form-label d-inline">@<%=data.username%> </label>
+              <input type="text"  name="comment" class="form-control" placeholder="type comment...."> <br>
               <button class="btn1 btn btn-primary font-weight-bold" type="submit">Add Comment</button>
             </form>
 
@@ -177,9 +178,9 @@
       <div>
 
         <%for(let i=0 ;i < data.comments.length ; i++){%>
-          <a href="/user_profile/<%=user._id%>/<%=data.comments[i].from%>" class="font-weight-bold" style="text-decoration: none;color:black"><%=data.comments[i].from%> </a>
+          <span class="font-weight-bold"><%= i+1 %>. </span><a href="/user_profile/<%=user._id%>/<%=data.comments[i].from%>" class="font-weight-bold" style="text-decoration: none;color:black"><%=data.comments[i].from%> </a>
           <a href="/user_profile/<%=user._id%>/<%=data.comments[i].to%>" class="font-weight-bold" style="text-decoration: none; color: blue;">@<%=data.comments[i].to%> </a>
-          <%= i %> <%=data.comments[i].text%>
+           <span><%=data.comments[i].text%> </span>
 
           <button type="button" class="btn1 btn btn-primary  font-weight-bold" onclick="formvisible('<%= i %>');">
             reply
@@ -188,18 +189,18 @@
 
 
                     <form id="<%=i%>" class="form-inline" action="/question/<%=data._id%>/<%=user.username%>/<%=i%>" method="POST" style="display: none;" >
-
-                      <input type="text" name="comment" class="form-control" placeholder="@<%=data.comments[i].from%> " style="width: 80%;">
+                      <label  class="form-label d-inline">@<%=data.comments[i].from%> </label>
+                      <input type="text" name="comment" class="form-control" placeholder="type reply..." style="width: 80%;">
                       <button class=" btn1 btn btn-primary font-weight-bold" type="submit"><i class="fa fa-paper-plane" aria-hidden="true"></i></button>
                       <br>
                     </form>
 
               <%for(let j=0 ;j < data.comments[i].replies.length ; j++){%>
 
-                <a href="/user_profile/<%=user._id%>/<%=data.comments[i].replies[j].from%>" class="font-weight-bold ml-4" style="text-decoration: none;color:black"><%=data.comments[i].replies[j].from%> </a>
+                <a href="/user_profile/<%=user._id%>/<%=data.comments[i].replies[j].from%>" class="font-weight-bold ml-5" style="text-decoration: none;color:black"><%=data.comments[i].replies[j].from%> </a>
                 <a href="/user_profile/<%=user._id%>/<%=data.comments[i].replies[j].to%>" class="font-weight-bold" style="text-decoration: none; color: blue;">@<%=data.comments[i].replies[j].to%> </a>
-                <%=data.comments[i].replies[j].text%>
-                <button type="button" class="btn1 btn btn-primary  font-weight-bold" onclick="reply('<%=data.comments[i].replies[j]._id%>');" >
+                <span> <%=data.comments[i].replies[j].text%></span>
+                <button type="button" class="btn1 btn btn-primary  font-weight-bold " onclick="reply('<%=data.comments[i].replies[j]._id%>');" >
                   reply
                 </button>
 
@@ -212,8 +213,8 @@
                     -->
 
                     <form id="<%=data.comments[i].replies[j]._id%>" class="form-inline" action="/question/<%=data._id%>/<%=user.username%>/<%=i%>/<%=j%>" method="POST" style="display: none;" >
-
-                      <input type="text" name="comment" class="form-control" placeholder="@<%=data.comments[i].replies[j].from%> " style="width: 80%;">
+                      <label class="form-label d-inline">@<%=data.comments[i].replies[j].from%> </label>
+                      <input type="text" name="comment" class="form-control" placeholder="type reply... " style="width: 80%;">
                       <button class="btn1 btn btn-primary font-weight-bold" type="submit" ><i class="fa fa-paper-plane" aria-hidden="true"></i></button>
                       <br>
                     </form>
