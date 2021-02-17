@@ -139,7 +139,7 @@
         <%for(let i=0 ;i < data.comments.length ; i++){%>
           <a href="/user_profile/<%=user._id%>/<%=data.comments[i].from%>" class="font-weight-bold" style="text-decoration: none;color:black"><%=data.comments[i].from%> </a>
           <a href="/user_profile/<%=user._id%>/<%=data.comments[i].to%>" class="font-weight-bold" style="text-decoration: none; color: blue;">@<%=data.comments[i].to%> </a>
-          <%=data.comments[i].text%> 
+          <%=data.comments[i].text%>
           <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalc">
             reply
           </button>
@@ -205,7 +205,7 @@
 
       </div>
 
-      
+
 
     </div>
     <script type="text/javascript">
