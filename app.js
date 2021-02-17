@@ -893,8 +893,6 @@ app.post('/question/:qid/:u2name/:cindex',verifyuser,(req,res)=>{
   data.findOne({_id:req.params.qid},(err,question)=>{
     if(err)
     console.log(err);
-    else if(!question)
-    res.render('/question/'+req.params.qid+'/'+req.params.u1name);
     else {
       Account.findOne({username:req.params.u2name},(err,user2)=>{
         if(err)
@@ -902,6 +900,7 @@ app.post('/question/:qid/:u2name/:cindex',verifyuser,(req,res)=>{
         else if(!user2 || req.user!=user2.username)
         res.redirect('/login')
         else {
+          console.log(req.params.cindex);
               let reply = {
                 to : question.comments[req.params.cindex].from,
                 from : user2.username,
