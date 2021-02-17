@@ -177,9 +177,9 @@
       <div>
         
         <%for(let i=0 ;i < data.comments.length ; i++){%>
-          <a href="/user_profile/<%=user._id%>/<%=data.comments[i].from%>" class="font-weight-bold" style="text-decoration: none;color:black"><%=data.comments[i].from%> </a>
+          <span class="font-weight-bold"><%= i+1 %>. </span><a href="/user_profile/<%=user._id%>/<%=data.comments[i].from%>" class="font-weight-bold" style="text-decoration: none;color:black"><%=data.comments[i].from%> </a>
           <a href="/user_profile/<%=user._id%>/<%=data.comments[i].to%>" class="font-weight-bold" style="text-decoration: none; color: blue;">@<%=data.comments[i].to%> </a>
-          <%= i %> <%=data.comments[i].text%> 
+           <%=data.comments[i].text%> 
           
           <button type="button" class="btn1 btn btn-primary  font-weight-bold" onclick="formvisible('<%= i %>');">
             reply
