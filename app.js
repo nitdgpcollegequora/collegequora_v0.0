@@ -29,6 +29,7 @@ app.use(bodyParser.json())
 // importing account and data schema
 const Account = require('./models/account');
 const data = require('./models/data');
+const account = require('./models/account');
 
 // storing all data to a local database test.
 mongoose.connect('mongodb://localhost/test', { useNewUrlParser: true, useUnifiedTopology: true });
@@ -47,7 +48,28 @@ app.get('/' , (req,res)=>{
   res.render('landing');
 });
 
-
+function verifyuser(req,res,next){
+  const bearertoken = req.cookies.jwt;
+  console.log(bearertoken);
+  if(!bearertoken)
+  {
+    req.flash('error','please login');
+    res.redirect('/login');
+  }else {
+    jwt.verify(bearertoken,'secretkey',(err,decoded)=>{
+        if(err)
+        {
+          console.log(err);
+          req.flash('error','please login');
+          res.redirect('/login');
+        }
+        else {
+          req.user = decoded.user;
+          next();
+        }
+    });
+  }
+}
 
 app.get('/home/:id/:page', (req, res) => {
   let id =req.params.id;
@@ -72,7 +94,7 @@ app.get('/home/:id/:page', (req, res) => {
       const limit = 10;
 
       const startIndex = (page-1)*limit;
-      const endIndex = page*limit;
+      //const endIndex = page*limit;
       data.find({}, null, {skip: startIndex, limit: limit}, function (err, datas) {
           if (err)
               console.log(err);
@@ -93,70 +115,15 @@ app.get('/home/:id/:page', (req, res) => {
 });
 
 
-const users = [
-  {id: 1, name: 'User 1'},
-  {id: 2, name: 'User 2'},
-  {id: 3, name: 'User 3'},
-  {id: 4, name: 'User 4'},
-  {id: 5, name: 'User 5'},
-  {id: 6, name: 'User 6'},
-  {id: 7, name: 'User 7'},
-  {id: 8, name: 'User 8'},
-  {id: 9, name: 'User 9'},
-  {id: 10, name: 'User 10'},
-  {id: 11, name: 'User 11'},
-  {id: 12, name: 'User 12'},
-  {id: 13, name: 'User 13'}
-];
 
 /*app.get('/users', (req, res) =>{
   //results = paginatedResults(users, req);
   res.json(results);
 });*/
 
-function paginatedResults(model, req){
-  const page = parseInt(req.params.page);
-  //const limit = parseInt(req.query.limit);
-  const limit = 10;
 
-  const startIndex = (page-1)*limit;
-  const endIndex = page*limit;
 
-  result = {};
-  result.next = {
-    page: page+1,
-    limit: limit,
-    check: false
-  };
-  if(endIndex < users.length){
-    result.next.check = true;
-  }
-  result.previous = {
-    page: page-1,
-    limit: limit,
-    check: false
-  };
-  if(startIndex > 0){
-    result.previous.check = true;
-  }
-  /*else {
-    jwt.verify(bearertoken,'secretkey',(err,decoded)=>{
-        if(err)
-        {
-          console.log(err);
-          req.flash('error','please login');
-          res.redirect('/login');
-        }
-        else {
-          req.user = decoded.user;
-          next();
-        }
-    });
-  }*/
-  //results.results = users.slice(startIndex, endIndex);
-  //results.results = model.limit(limit).skip(startIndex).exec();
-
-  model.find({}, {skip:startIndex, limit:limit}, (err, datas) => {
+  /*model.find({}, {skip:startIndex, limit:limit}, (err, datas) => {
     if(err){
       console.log(111);
       console.log(err);
@@ -166,7 +133,7 @@ function paginatedResults(model, req){
     }
   });
   return result;
-}
+}*/
 
 
 
@@ -222,8 +189,10 @@ app.post('/question/:uid', (req, res) => {
 
       let Data = new data();
       Data.uid = uid;
+      Data.username = user.username;
       Data.name = req.body.subjectcode;
       Data.content = req.body.problem;
+      Data.comments = [];
       if(!Data.name)
       {
         req.flash('error','please fill subjectcode');
@@ -317,12 +286,11 @@ app.post('/login', (req, res) => {
               }
               // console.log(err);
               else {
-                // jwt.sign({user:user},'secretkey',(err,token)=>{
-                //
-                // })
-                req.flash('success',`welcome ${username}`);
-                //res.redirect('/home/'+user._id);
-                res.redirect('/home/'+user._id+'/'+1);
+                const token = jwt.sign({user:user.username},'secretkey')
+                  console.log(token);
+                  res.cookie('jwt',token,{maxAge:10800000,httpOnly:true});
+                      req.flash('success',`welcome ${username}`);
+                      res.redirect('/home/'+user._id + '/'+ 1);
               }
             })
           }
@@ -499,7 +467,7 @@ app.get('/edit_question/:qid/:uid/:loc' , (req , res)=>{
     })
 });
 
-app.post('/edit_question/:qid/:uid/:loc' , (req , res)=>{
+app.post('/edit_question/:qid/:uid/:loc' ,verifyuser, (req , res)=>{
     let qid = req.params.qid;
     let subjectcode =req.body.subjectcode;
     let problem = req.body.problem;
@@ -538,7 +506,7 @@ app.post('/edit_question/:qid/:uid/:loc' , (req , res)=>{
     });
 });
 
-app.get('/delete_question/:qid/:uid/:loc', (req , res)=>{
+app.get('/delete_question/:qid/:uid/:loc',verifyuser, (req , res)=>{
   let qid = req.params.qid;
   let uid = req.params.uid;
   let loc = req.params.loc;
@@ -578,7 +546,7 @@ app.get('/delete_question/:qid/:uid/:loc', (req , res)=>{
   });
 });
 
-app.get('/present/:id/:index',(req ,res)=>{
+app.get('/present/:id/:index',verifyuser,(req ,res)=>{
   let id =req.params.id;
   let index = req.params.index;
   Account.findOne({_id:id} , (err , user)=>{
@@ -612,7 +580,7 @@ app.get('/present/:id/:index',(req ,res)=>{
   });
 })
 
-app.get('/absent/:id/:index',(req ,res)=>{
+app.get('/absent/:id/:index',verifyuser,(req ,res)=>{
   let id =req.params.id;
   let index = req.params.index;
   Account.findOne({_id:id} , (err , user)=>{
@@ -656,7 +624,7 @@ app.get('/profile/:id',(req,res)=>{
   })
 })
 
-app.post('/profile/:id/course',(req,res)=>{
+app.post('/profile/:id/course',verifyuser,(req,res)=>{
   let coursename = req.body.course;
   let id = req.params.id;
  if(!coursename)
@@ -713,7 +681,7 @@ app.post('/profile/:id/course',(req,res)=>{
  }
 })
 
-app.get('/delete/:uid/:index',(req,res)=>{
+app.get('/delete/:uid/:index',verifyuser,(req,res)=>{
   let uid = req.params.uid;
   let index = req.params.index;
   Account.findOne({_id:uid},(err,user)=>{
@@ -788,7 +756,7 @@ app.get('/profile/:uid/edit_profile/edit_username' , (req , res)=>{
 })
 
 
-app.post('/profile/:uid/edit_profile/edit_username' ,(req , res)=>{
+app.post('/profile/:uid/edit_profile/edit_username' , verifyuser,(req , res)=>{
   let uid = req.params.uid;
   Account.findOne({_id:uid} , (err , user)=>{
     if(err)
@@ -832,7 +800,7 @@ app.get('/profile/:uid/edit_profile/edit_password' , (req , res)=>{
   })
 })
 
-app.post('/profile/:uid/edit_profile/edit_password' , (req , res)=>{
+app.post('/profile/:uid/edit_profile/edit_password' ,verifyuser, (req , res)=>{
   let uid = req.params.uid;
   Account.findOne({_id:uid} , (err , user)=>{
     if(err)
@@ -925,6 +893,162 @@ app.get('/logout/:uid',(req,res)=>{
   })
 })
 
+app.get('/show_more/:dt_id/:uid',(req , res)=>{
+  let qid = req.params.dt_id;
+  let uid = req.params.uid;
+  account.findOne({_id:uid} , (err , user)=>{
+    if(err)
+    console.log(err);
+    else{
+      data.findOne({_id:qid} , (err , data)=>{
+        if(err)
+        console.log(err);
+        else
+        {
+          res.render('show_more' , {data:data , user:user});
+        }
+      })
+    }
+  })
+});
+
+app.get('/user_profile/:uid/:uid1' , (req , res)=>{
+  let uid1 = req.params.uid1;
+  let uid = req.params.uid;
+  account.findOne({_id:uid} , (err , user)=>{
+    if(err)
+    console.log(err);
+    else{
+      account.findOne({username:uid1} , (err , user1)=>{
+        if(err)
+        console.log(err);
+        else
+        {
+          data.find({username:uid1} , (err , data)=>{
+            if(err)
+            console.log(err);
+            else{
+              res.render('user_profile' , {user:user ,  user2:user1 , data:data});
+            }
+          })
+        }
+      })
+    }
+  })
+})
+
+app.post('/question/:qid/:u2name',verifyuser,(req,res)=>{
+  
+  data.findOne({_id:req.params.qid},(err,question)=>{
+    if(err)
+    console.log(err);
+    else if(!question)
+    res.render('/question/'+req.params.qid+'/'+req.params.u1name);
+    else {
+      Account.findOne({username:req.params.u2name},(err,user2)=>{
+        if(err)
+        console.log(err);
+        else if(!user2 || req.user!=user2.username)
+        res.redirect('/login')
+        else {
+          if(req.body.comment.length == 0)
+          res.redirect('/show_more/'+question._id+'/'+user2._id);
+          else{
+            let comment = {
+              to : question.username,
+              from : user2.username,
+              text : req.body.comment
+            };
+            
+            question.comments.push(comment);
+            question.save(err=>{
+              if(err)
+              console.log(err);
+              else {
+                res.redirect('/show_more/'+question._id+'/'+user2._id);
+              }
+            })
+          }
+              
+        }
+      })
+    }
+  })
+})
+
+
+app.post('/question/:qid/:u2name/:cindex',verifyuser,(req,res)=>{
+  data.findOne({_id:req.params.qid},(err,question)=>{
+    if(err)
+    console.log(err);
+    else {
+      Account.findOne({username:req.params.u2name},(err,user2)=>{
+        if(err)
+        console.log(err);
+        else if(!user2 || req.user!=user2.username)
+        res.redirect('/login')
+        else {
+          if(req.body.comment.length == 0)
+          res.redirect('/show_more/'+question._id+'/'+user2._id);
+          else{
+            let reply = {
+              to : question.comments[req.params.cindex].from,
+              from : user2.username,
+              text : req.body.comment
+            };
+            question.comments[req.params.cindex].replies.push(reply);
+            question.save(err=>{
+              if(err)
+              console.log(err);
+              else {
+                res.redirect('/show_more/'+question._id+'/'+user2._id);
+              }
+            })
+          }
+             
+        }
+      })
+    }
+  })
+})
+
+app.post('/question/:qid/:u2name/:cindex/:rindex',verifyuser,(req,res)=>{
+  data.findOne({_id:req.params.qid},(err,question)=>{
+    if(err)
+    console.log(err);
+    else if(!question)
+    res.render('/question/'+req.params.qid+'/'+req.params.u1name);
+    else {
+      Account.findOne({username:req.params.u2name},(err,user2)=>{
+        if(err)
+        console.log(err);
+        else if(!user2 || req.user!=user2.username)
+        res.redirect('/login')
+        else {
+          if(req.body.comment.length == 0)
+          res.redirect('/show_more/'+question._id+'/'+user2._id);
+          else{
+            let reply = {
+              to : question.comments[req.params.cindex].replies[req.params.rindex].from,
+              from : user2.username,
+              text : req.body.comment
+            };
+            question.comments[req.params.cindex].replies.push(reply);
+            question.save(err=>{
+              if(err)
+              console.log(err);
+              else {
+                res.redirect('/show_more/'+question._id+'/'+user2._id);
+              }
+            })
+
+          }
+              
+        }
+      })
+    }
+  })
+})
 
 app.listen('3000', (err) => {
   if (err)
