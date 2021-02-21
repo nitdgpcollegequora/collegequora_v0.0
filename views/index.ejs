@@ -93,7 +93,7 @@
                     </li>
                     <li class="list-group-item border-0 text-center" id="navitem"><a href="/profile/<%=user._id%>"
                             id="navlinkitem"><%= user.username %></a></li>
-                    <li class="list-group-item border-0 text-center" id="navitem"><a href="/home/<%=user._id%>"
+                    <li class="list-group-item border-0 text-center" id="navitem"><a href="/home/<%=user._id%>/1"
                                       id="navlinkitem">Home</a></li>
                     <li class="list-group-item border-0 text-center" id="navitem"><a href="/question/<%=user._id%>"
                             id="navlinkitem">Write a Question</a></li>
@@ -153,6 +153,34 @@
 
             <% }); %>
         </div>
+        <div class="container-md container-fluid">
+            <% if(checks.prev){ %>
+            <div class="float-left">
+                <a href="/home/<%=user._id%>/<%=page-1%>" type="button" class="btn btn-default btn-lg">
+                    previous
+                </button>
+            </div>
+            <% }else{ %>
+                <div class="float-left">
+                    <a href="" type="button" class="btn btn-default btn-lg">
+                        previous
+                    </button>
+                </div>
+            <% } %>
+            <% if(checks.next){ %>
+            <div class="float-right">
+                <a href="/home/<%=user._id%>/<%=page+1%>" type="button" class="btn btn-default btn-lg">
+                    next
+                </button>
+            </div>
+            <% }else{ %>
+                <div class="float-right">
+                    <a href="" type="button" class="btn btn-default btn-lg">
+                        next
+                    </button>
+                </div>
+            <% } %>
+            </div>
         <!-- footer -->
 
         <div

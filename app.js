@@ -7,11 +7,14 @@ const session = require('express-session');
 const flash = require('connect-flash');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const cookie = require('cookie-parser');
+
 
 const app = express();
 app.set('view engine', 'ejs');
 
 app.use(bodyParser.urlencoded({ extended: false }))
+app.use(cookie());
 
 app.use(session({
   secret: 'keyboard cat',
@@ -77,7 +80,12 @@ app.get('/home/:id/:page', (req, res) => {
             //const results = paginatedResults(datas, req);
             console.log(datas);
             console.log(typeof(datas));
-            res.render('index', {datas: datas, user:user, success:req.flash('success'), page:page});
+            const check_prev = page > 1;
+            const check_next = datas.length >= 10;
+            const checks = {
+              prev: check_prev, next: check_next
+            }
+            res.render('index', {datas: datas, user:user, success:req.flash('success'), page:page, checks:checks});
           }
       });
     }
@@ -131,6 +139,20 @@ function paginatedResults(model, req){
   if(startIndex > 0){
     result.previous.check = true;
   }
+  /*else {
+    jwt.verify(bearertoken,'secretkey',(err,decoded)=>{
+        if(err)
+        {
+          console.log(err);
+          req.flash('error','please login');
+          res.redirect('/login');
+        }
+        else {
+          req.user = decoded.user;
+          next();
+        }
+    });
+  }*/
   //results.results = users.slice(startIndex, endIndex);
   //results.results = model.limit(limit).skip(startIndex).exec();
 
@@ -191,17 +213,10 @@ app.post('/question/:uid', (req, res) => {
       req.flash('error',`user don't exist`);
       res.redirect('/login');
     }
-    else if(!user.login)
+    else if(!user.login || req.user!=user.username)
     {
-      if(req.user == user.username)
-      {
-        req.flash('error','please log in');
-        res.redirect('/login');
-      }
-      else {
-        req.flash('error',`please login`);
-        res.redirect('/login');
-      }
+      req.flash('error','please log in2');
+      res.redirect('/login');
     }
     else {
 
@@ -288,7 +303,7 @@ app.post('/login', (req, res) => {
       console.log(err);
       else if(!user)
       {
-        req.flash('error',`user don't exist1`);
+        req.flash('error',`user don't exist`);
         res.redirect('/login');
       }
       else{
@@ -313,7 +328,7 @@ app.post('/login', (req, res) => {
           }
           else {
             req.flash('error','incorrect password');
-            res.redirect('/login');
+            res.redirect('/login')
           }
       }
     })
@@ -498,6 +513,11 @@ app.post('/edit_question/:qid/:uid/:loc' , (req , res)=>{
         req.flash('error',`user doesn't exist`);
         res.redirect('/login');
       }
+      else if(!user.login || req.user != user.username)
+      {
+        req.flash('error','please login');
+        res.redirect('/login');
+      }
       else {
         let Data = new data;
         Data = {
@@ -533,7 +553,7 @@ app.get('/delete_question/:qid/:uid/:loc', (req , res)=>{
           req.flash('error',`user doesn't exist`);
           res.redirect('/login');
         }
-        else if(!user.login)
+        else if(!user.login || req.user!=user.username)
         {
           req.flash('error','please login');
           res.redirect('login');
@@ -569,7 +589,7 @@ app.get('/present/:id/:index',(req ,res)=>{
       req.flash('error',`user doesn't exist`);
       res.redirect('/login');
     }
-    else if(!user.login)
+    else if(!user.login || req.user != user.username)
     {
       req.flash('error','please login');
       res.redirect('/login');
@@ -603,7 +623,7 @@ app.get('/absent/:id/:index',(req ,res)=>{
       req.flash('error',`user doesn't exist`);
       res.redirect('/login');
     }
-    else if(!user.login)
+    else if(!user.login || req.user != user.username)
     {
       req.flash('error','please login');
       res.redirect('/login');
@@ -653,7 +673,7 @@ app.post('/profile/:id/course',(req,res)=>{
        req.flash('error',`user doesn't exist`);
        res.redirect('/login');
      }
-     else if(!user.login)
+     else if(!user.login || req.user != user.username)
      {
        req.flash('error','please login');
        res.redirect('/login');
@@ -704,7 +724,7 @@ app.get('/delete/:uid/:index',(req,res)=>{
       req.flash('error',`user doesn't exist`);
       res.redirect('/login');
     }
-    else if(!user.login)
+    else if(!user.login || req.user!=user.username)
     {
       req.flash('error','please login');
       res.redirect('/login');
@@ -768,7 +788,7 @@ app.get('/profile/:uid/edit_profile/edit_username' , (req , res)=>{
 })
 
 
-app.post('/profile/:uid/edit_profile/edit_username' , (req , res)=>{
+app.post('/profile/:uid/edit_profile/edit_username' ,(req , res)=>{
   let uid = req.params.uid;
   Account.findOne({_id:uid} , (err , user)=>{
     if(err)
@@ -778,7 +798,7 @@ app.post('/profile/:uid/edit_profile/edit_username' , (req , res)=>{
       req.flash('error',`user doesn't exist`);
       res.redirect('/login');
     }
-    else if(!user.login)
+    else if(!user.login || req.user != user.username)
     {
       req.flash('error','please login');
       res.redirect('/login');
@@ -822,7 +842,7 @@ app.post('/profile/:uid/edit_profile/edit_password' , (req , res)=>{
       req.flash('error',`user doesn't exist`);
       res.redirect('/login');
     }
-    else if(!user.login)
+    else if(!user.login || req.user != user.username)
     {
       req.flash('error','please login');
       res.redirect('/login');
