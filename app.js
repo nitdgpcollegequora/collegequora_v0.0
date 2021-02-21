@@ -170,7 +170,7 @@ app.get('/question/:uid', (req, res) => {
     })
 });
 
-app.post('/question/:uid', (req, res) => {
+app.post('/question/:uid',verifyuser, (req, res) => {
   let uid = req.params.uid;
   Account.findOne({_id:uid},(err,user)=>{
     if(err)
