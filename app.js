@@ -31,7 +31,7 @@ const Account = require('./models/account');
 const data = require('./models/data');
 const account = require('./models/account');
 // storing all data to a local database test.
-mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect("mongodb+srv://yadu:1234@cluster0.5ldkd.mongodb.net/CLGQUORA?retryWrites=true&w=majority", { useNewUrlParser: true, useUnifiedTopology: true });
 let db = mongoose.connection;
 
 
