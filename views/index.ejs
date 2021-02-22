@@ -93,7 +93,7 @@
                     </li>
                     <li class="list-group-item border-0 text-center" id="navitem"><a href="/profile/<%=user._id%>"
                             id="navlinkitem"><%= user.username %></a></li>
-                    <li class="list-group-item border-0 text-center" id="navitem"><a href="/home/<%=user._id%>"
+                    <li class="list-group-item border-0 text-center" id="navitem"><a href="/home/<%=user._id%>/1"
                                       id="navlinkitem">Home</a></li>
                     <li class="list-group-item border-0 text-center" id="navitem"><a href="/question/<%=user._id%>"
                             id="navlinkitem">Write a Question</a></li>
@@ -115,7 +115,7 @@
               <div class="alert alert-success text-center">
                 <%= msg %>
               </div>
-              <%})%>
+              <%});%>
             <%}%>
             <% let loc = 0; %>
             <% datas.reverse(); %>
@@ -130,7 +130,7 @@
                         <li class="list-group-item border-0 tag mr-md-2 mb-2"><a href="#"
                                 style="text-decoration: none;color: black;"><%=dt.name%></a></li>
                     </ul>
-                    <% if(user._id == dt.uid){ %>
+                    <% if(user.username == dt.username){ %>
                     <ul class="list-group flex-row">
                         <a class=" btn  list-group-item mr-1 border-0" href="/edit_question/<%= dt._id %>/<%=user._id%>/<%=loc%>"> <i class="fa fa-pencil mt-1" style="font-size: 24px; color:rgb(50, 93, 122)"></i> </a>
                         <a class=" btn  list-group-item border-0" href="/delete_question/<%= dt._id %>/<%=user._id%>/<%=loc%>"> <i class="fa fa-trash mt-1" style="font-size: 24px; color:red"></i> </a>
@@ -145,7 +145,7 @@
 
                 </div>
                 <div class="card-footer border-0" >
-                    <div class="btn btn-primary font-weight-bold">Read more...</div>
+                    <a class="btn btn-primary font-weight-bold" href="/show_more/<%=dt._id %>/<%=user._id%>/">Show more...</a>
                 </div>
             </div>
 
@@ -153,6 +153,34 @@
 
             <% }); %>
         </div>
+        <div class="container-md container-fluid">
+            <% if(checks.prev){ %>
+            <div class="float-left">
+                <a href="/home/<%=user._id%>/<%=page-1%>" type="button" class="btn btn-default btn-lg">
+                    previous
+                </button>
+            </div>
+            <% }else{ %>
+                <div class="float-left">
+                    <a href="" type="button" class="btn btn-default btn-lg">
+                        previous
+                    </button>
+                </div>
+            <% } %>
+            <% if(checks.next){ %>
+            <div class="float-right">
+                <a href="/home/<%=user._id%>/<%=page+1%>" type="button" class="btn btn-default btn-lg">
+                    next
+                </button>
+            </div>
+            <% }else{ %>
+                <div class="float-right">
+                    <a href="" type="button" class="btn btn-default btn-lg">
+                        next
+                    </button>
+                </div>
+            <% } %>
+            </div>
         <!-- footer -->
 
         <div

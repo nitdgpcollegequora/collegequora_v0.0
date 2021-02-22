@@ -182,10 +182,10 @@
                 <li class="list-group-item w-100 heading" style="background-color: #ddd;">
                     <div class="row ">
                         <div class="col-md-4 col-6 font-weight-bold " style="font-size: 18px;"> Course Name</div>
-                        <div class="col-md-3 col-6 font-weight-bold" style="font-size: 18px;">Attendance(%)</div>
-                        <div class="col-md-2 col-6 font-weight-bold" style="font-size: 18px;">Present</div>
-                        <div class="col-md-2 col-6 font-weight-bold" style="font-size: 18px;">Absent</div>
-                        <div class="col-md-1 col-6 font-weight-bold" style="font-size: 18px;">Delete</div>
+                        <div class="col-md-3 col-6 font-weight-bold text-center" style="font-size: 18px;">Attendance(%)</div>
+                        <div class="col-md-2 col-6 font-weight-bold text-center" style="font-size: 18px;">Present</div>
+                        <div class="col-md-2 col-6 font-weight-bold text-center" style="font-size: 18px;">Absent</div>
+                        <div class="col-md-1 col-6 font-weight-bold text-center" style="font-size: 18px;">Delete</div>
                     </div>
                 </li>
 
@@ -196,13 +196,13 @@
                     <li class="list-group-item w-100">
                         <div class="row">
                             <div class="col-md-4 col-sm-9 col-6 font-weight-bold mb-md-0 mb-2"><%= att.sub_code %></div>
-                            <div class="col-md-3 col-sm-3 col-6 font-weight-bold mb-md-0 mb-2"><%= per.toFixed(2) %></div>
-
-                            <div class="col-md-2 col-sm-4 col-6 mb-md-0 mb-2"><a class="btn btn-success font-weight-bold" href="/present/<%= user._id %>/<%= i %>" style="text-decoration:none;color:white;">present(<%=att.present%>)</a>
+                            <div class="col-md-3 col-sm-3 col-6 font-weight-bold mb-md-0 mb-2 text-center"><%= per.toFixed(2) %></div>
+                            
+                            <div class="col-md-2 col-sm-4 col-6 mb-md-0 mb-2 text-center"><a class="btn btn-success font-weight-bold" href="/present/<%= user._id %>/<%= i %>" style="text-decoration:none;color:white;">present(<%=att.present%>)</a>
                             </div>
-                            <div class="col-md-2 col-sm-4 col-6 mb-md-0 mb-2"><a class="btn btn-danger font-weight-bold" href="/absent/<%= user._id %>/<%= i %>" style="text-decoration:none;color:white">Absent(<%=att.absent%>)</a>
+                            <div class="col-md-2 col-sm-4 col-6 mb-md-0 mb-2 text-center"><a class="btn btn-danger font-weight-bold" href="/absent/<%= user._id %>/<%= i %>" style="text-decoration:none;color:white">Absent(<%=att.absent%>)</a>
                             </div>
-                            <div class="col-md-1 col-sm-4 col-6">
+                            <div class="col-md-1 col-sm-4 col-6 text-center">
                             <!-- <a class="d-inline btn  list-group-item p-0 border-0 ml-3 text-center " data-toggle="modal" data-target="#myModal" href="/delete/<%=user._id%>/<%=i%>"> <i class="fa fa-trash mt-1" style="font-size: 24px; color:red"></i> </a> -->
                             <!-- <a class=" btn  list-group-item p-0 border-0 ml-3 text-center " data-toggle="modal" href="#myModal"> <i class="fa fa-trash mt-1" style="font-size: 24px; color:red"></i> </a> -->
 
