@@ -8,7 +8,7 @@ const flash = require('connect-flash');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const cookie = require('cookie-parser');
-
+require('dotenv').config()
 
 const app = express();
 app.set('view engine', 'ejs');
@@ -30,9 +30,8 @@ app.use(bodyParser.json())
 const Account = require('./models/account');
 const data = require('./models/data');
 const account = require('./models/account');
-
 // storing all data to a local database test.
-mongoose.connect('mongodb://localhost/test', { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true });
 let db = mongoose.connection;
 
 
@@ -938,7 +937,7 @@ app.get('/user_profile/:uid/:uid1' , (req , res)=>{
 })
 
 app.post('/question/:qid/:u2name',verifyuser,(req,res)=>{
-  
+
   data.findOne({_id:req.params.qid},(err,question)=>{
     if(err)
     console.log(err);
@@ -959,7 +958,7 @@ app.post('/question/:qid/:u2name',verifyuser,(req,res)=>{
               from : user2.username,
               text : req.body.comment
             };
-            
+
             question.comments.push(comment);
             question.save(err=>{
               if(err)
@@ -969,7 +968,7 @@ app.post('/question/:qid/:u2name',verifyuser,(req,res)=>{
               }
             })
           }
-              
+
         }
       })
     }
@@ -1005,7 +1004,7 @@ app.post('/question/:qid/:u2name/:cindex',verifyuser,(req,res)=>{
               }
             })
           }
-             
+
         }
       })
     }
@@ -1043,16 +1042,16 @@ app.post('/question/:qid/:u2name/:cindex/:rindex',verifyuser,(req,res)=>{
             })
 
           }
-              
+
         }
       })
     }
   })
 })
 
-app.listen('3000', (err) => {
+app.listen(process.env.PORT||'3000', (err) => {
   if (err)
         console.log(err);
     else
         console.log(`app listening at 3000`);
-}); 
+});
