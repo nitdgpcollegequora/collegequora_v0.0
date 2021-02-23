@@ -41,6 +41,10 @@
                 background-color: #333;
             }
 
+            #hammenu{
+              display: none;
+              cursor: pointer;
+            }
             .tag {
                 background-color: rgb(214, 213, 213);
                 border-radius: 5px;
@@ -49,13 +53,8 @@
             .footr {
                 background-color: rgb(50, 107, 24);
             }
-            #hammenu{
-              display: none;
-              cursor: pointer;
-            }
             .cont{
               width: 75%;
-              
             }
             @media screen and (max-width:768px) {
               .showlinks{
@@ -92,32 +91,33 @@
                                         class="fa fa-search"></i></span></div>
                         </div>
                     </li>
-                    <li class="list-group-item border-0 text-center" id="navitem"><a href="/profile/<%=user._id%>"
-                            id="navlinkitem"><%= user.username %></a></li>
-                    <li class="list-group-item border-0 text-center" id="navitem"><a href="/home/<%=user._id%>/1"
-                            id="navlinkitem">Home</a></li>
+                    <li class="list-group-item border-0 text-center" id="navitem"><a href="/login"
+                            id="navlinkitem">Login</a></li>
+                    <li class="list-group-item border-0 text-center" id="navitem"><a href="/home/1"
+                                      id="navlinkitem">Home</a></li>
+                    <li class="list-group-item border-0 text-center" id="navitem"><a href="/login"
+                            id="navlinkitem">Write a Question</a></li>
                     <li class="list-group-item border-0 text-center" id="navitem"><a href="/about"
                             id="navlinkitem">About Us</a></li>
                     <li class="list-group-item border-0 text-center" id="navitem"><a href="/contact"
                             id="navlinkitem">Contact Us</a></li>
-                    <li class="list-group-item border-0 text-center" id="navitem"><a href="/login"
-                              id="navlinkitem">Log Out</a></li>
+                    <!-- <li class="list-group-item border-0 text-center" id="navitem"><a href="/1"
+                              id="navlinkitem">Log Out</a></li> -->
                 </ul>
             </div>
         </div>
 
         <!-- body -->
 
-        <div class="container-md container-fluid cont border border-primary mt-2">
-            <div class="text-center"><h3 class="font-weight-bolder">My Questions</h3></div>
-            <%let loc = 1; %>
+        <div class="container-md container-fluid cont">
             <%if(success.length){ %>
               <%success.forEach(function(msg){%>
-              <div class="alert alert-success">
+              <div class="alert alert-success text-center">
                 <%= msg %>
               </div>
-              <%})%>
+              <%});%>
             <%}%>
+            <% let loc = 0; %>
             <% datas.reverse(); %>
             <% datas.forEach(function(dt){ %>
             <div class="card my-3 shadow-lg p-md-3  w-100">
@@ -130,32 +130,50 @@
                         <li class="list-group-item border-0 tag mr-md-2 mb-2"><a href="#"
                                 style="text-decoration: none;color: black;"><%=dt.name%></a></li>
                     </ul>
-                    <!-- <% if(user._id == dt.uid){ %> -->
-                    <ul class="list-group flex-row">
-                        <a class=" btn  list-group-item mr-1 border-0" href="/edit_question/<%= dt._id %>/<%=user._id%>/<%=loc%>"> <i class="fa fa-pencil mt-1" style="font-size: 24px; color:rgb(50, 93, 122)"></i> </a>
-                        <a class=" btn  list-group-item border-0" href="/delete_question/<%= dt._id %>/<%=user._id%>/<%=loc%>"> <i class="fa fa-trash mt-1" style="font-size: 24px; color:red"></i> </a>
-                        <!-- <a class=" btn  list-group-item border-0" href="#myModal"> <i class="fa fa-trash mt-1" style="font-size: 24px; color:red"></i> </a> -->
 
-                        
 
-                    </ul>
-                    <!-- <% } %> -->
-                    
-                    
 
                 </div>
                 <div class="card-footer border-0" >
-                    <a class="btn btn-primary font-weight-bold" href="/show_more/<%=dt._id %>/<%=user._id%>/">Show more...</a>
+                    <a class="btn btn-primary font-weight-bold" href="/login">Show more...</a>
                 </div>
             </div>
-            
-            
+
+
 
             <% }); %>
         </div>
+        <div class="container-md container-fluid">
+            <% if(checks.prev){ %>
+            <div class="float-left">
+                <a href="/home/<%=page-1%>" type="button" class="btn btn-default btn-lg">
+                    previous
+                </button>
+            </div>
+            <% }else{ %>
+                <div class="float-left">
+                    <a href="" type="button" class="btn btn-default btn-lg">
+                        previous
+                    </button>
+                </div>
+            <% } %>
+            <% if(checks.next){ %>
+            <div class="float-right">
+                <a href="/home/<%=page+1%>" type="button" class="btn btn-default btn-lg">
+                    next
+                </button>
+            </div>
+            <% }else{ %>
+                <div class="float-right">
+                    <a href="" type="button" class="btn btn-default btn-lg">
+                        next
+                    </button>
+                </div>
+            <% } %>
+            </div>
         <!-- footer -->
 
-        <div
+        <!-- <div
             class="footr container-md container-fluid d-flex flex-md-row flex-column justify-content-around align-items-center">
             <div class="my-3">
                 <ul class="list-group flex-md-row flex-column" style="background-color: transparent;">
@@ -172,7 +190,7 @@
                               id="navlinkitem">logout</a></li>
                 </ul>
             </div>
-        </div>
+        </div> -->
         <div class=" container-md container-fluid mt-3  text-center" style="background-color:#333;">
             <span><i class="fa fa-copyright mr-2 text-white font-weight-bold"></i><span
                     class="text-white font-weight-bold">College Quora , National Institute of Technology , Durgapur 2020
