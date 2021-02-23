@@ -105,8 +105,7 @@
               id="navlinkitem">Write a Question</a></li>
               <li class="list-group-item border-0 text-center" id="navitem"><a href="/about"
                 id="navlinkitem">About Us</a></li>
-                <li class="list-group-item border-0 text-center" id="navitem"><a href="/contact"
-                  id="navlinkitem">Contact Us</a></li>
+                <li class="list-group-item border-0 text-center" id="navitem"><a href="https://mail.google.com/mail/?view=cm&fs=1&tf=1&to=yaduveera26@gmail.com" target="_blank" id="navlinkitem">Contact Us</a></li>
                   <li class="list-group-item border-0 text-center" id="navitem"><a href="/logout/<%=user._id%>"
                     id="navlinkitem">Log Out</a></li>
                   </ul>
@@ -197,7 +196,7 @@
                         <div class="row">
                             <div class="col-md-4 col-sm-9 col-6 font-weight-bold mb-md-0 mb-2"><%= att.sub_code %></div>
                             <div class="col-md-3 col-sm-3 col-6 font-weight-bold mb-md-0 mb-2 text-center"><%= per.toFixed(2) %></div>
-                            
+
                             <div class="col-md-2 col-sm-4 col-6 mb-md-0 mb-2 text-center"><a class="btn btn-success font-weight-bold" href="/present/<%= user._id %>/<%= i %>" style="text-decoration:none;color:white;">present(<%=att.present%>)</a>
                             </div>
                             <div class="col-md-2 col-sm-4 col-6 mb-md-0 mb-2 text-center"><a class="btn btn-danger font-weight-bold" href="/absent/<%= user._id %>/<%= i %>" style="text-decoration:none;color:white">Absent(<%=att.absent%>)</a>
