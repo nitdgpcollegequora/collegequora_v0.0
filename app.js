@@ -44,7 +44,53 @@ db.on('error', function (err) {
 });
 
 app.get('/' , (req,res)=>{
-  res.render('landing');
+  const page = 1;
+      //page = parseInt(page);
+      //const limit = parseInt(req.query.limit);
+      const limit = 10;
+
+      const startIndex = (page-1)*limit;
+      //const endIndex = page*limit;
+      data.find({}, null, {skip: startIndex, limit: limit}, function (err, datas) {
+          if (err)
+              console.log(err);
+          else {
+            //const results = paginatedResults(datas, req);
+            console.log(datas);
+            console.log(typeof(datas));
+            const check_prev = page > 1;
+            const check_next = datas.length >= 10;
+            const checks = {
+              prev: check_prev, next: check_next
+            }
+            res.render('home', {datas: datas, success:req.flash('success'), page:page, checks:checks});
+          }
+      });
+});
+
+app.get('/home/:page', (req, res) =>{
+  const page = parseInt(req.params.page);
+      //page = parseInt(page);
+      //const limit = parseInt(req.query.limit);
+      const limit = 10;
+
+      const startIndex = (page-1)*limit;
+      //const endIndex = page*limit;
+      data.find({}, null, {skip: startIndex, limit: limit}, function (err, datas) {
+          if (err)
+              console.log(err);
+          else {
+            //const results = paginatedResults(datas, req);
+            console.log(datas);
+            console.log(typeof(datas));
+            const check_prev = page > 1;
+            const check_next = datas.length >= 10;
+            const checks = {
+              prev: check_prev, next: check_next
+            }
+            res.render('home', {datas: datas, success:req.flash('success'), page:page, checks:checks});
+          }
+      });
 });
 
 function verifyuser(req,res,next){
