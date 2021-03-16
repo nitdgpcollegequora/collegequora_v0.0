@@ -321,28 +321,32 @@ app.post('/login', (req, res) => {
         res.redirect('/login');
       }
       else{
-          if(bcrypt.compare(password,user.password))
-          {
-            user.login=1;
-            user.save(err=>{
-              if(err)
-              {
-                console.log('hello'+err);
-              }
-              // console.log(err);
-              else {
-                const token = jwt.sign({user:user.username},'secretkey')
-                  console.log(token);
-                  res.cookie('jwt',token,{maxAge:10800000,httpOnly:true});
-                      req.flash('success',`welcome ${username}`);
-                      res.redirect('/home/'+user._id + '/'+ 1);
-              }
-            })
-          }
-          else {
-            req.flash('error','incorrect password');
-            res.redirect('/login')
-          }
+          bcrypt.compare(password,user.password,(err,ismatched)=>{
+            if(err)
+            console.log(err);
+            else if(ismatched)
+            {
+              user.login=1;
+              user.save(err=>{
+                if(err)
+                {
+                  console.log('hello'+err);
+                }
+                // console.log(err);
+                else {
+                  const token = jwt.sign({user:user.username},'secretkey')
+                    console.log(token);
+                    res.cookie('jwt',token,{maxAge:10800000,httpOnly:true});
+                        req.flash('success',`welcome ${username}`);
+                        res.redirect('/home/'+user._id + '/'+ 1);
+                }
+              })
+            }
+            else {
+              req.flash('error','wrong password');
+              res.redirect('/login');
+            }
+          })
       }
     })
 });
@@ -1095,9 +1099,9 @@ app.post('/question/:qid/:u2name/:cindex/:rindex',verifyuser,(req,res)=>{
   })
 })
 
-app.listen(process.env.PORT||'3000', (err) => {
+app.listen(process.env.PORT||'5000', (err) => {
   if (err)
         console.log(err);
     else
-        console.log(`app listening at 3000`);
+        console.log(`app listening at 5000`);
 });
