@@ -185,39 +185,49 @@ app.get('/login', (req, res) => {
 app.post('/login', (req, res) => {
     let username = req.body.username;
     let password = req.body.password;
-    Account.findOne({username:username},(err,user)=>{
-      if(err)
-      console.log(err);
-      else if(!user)
-      {
-        req.flash('error',`user don't exist`);
-        res.redirect('/login');
-      }
-      else{
-          if(bcrypt.compare(password,user.password))
-          {
-            user.login=1;
-            user.save(err=>{
-              if(err)
-              {
-                console.log('hello'+err);
-              }
-              // console.log(err);
-              else {
-                const token = jwt.sign({user:user.username},'secretkey')
-                  console.log(token);
-                  res.cookie('jwt',token,{maxAge:10800000,httpOnly:true});
-                      req.flash('success',`welcome ${username}`);
-                      res.redirect('/home/'+user._id);
-              }
-            })
-          }
-          else {
-            req.flash('error','incorrect password');
-            res.redirect('/login')
-          }
-      }
-    })
+    if(!username || !password || password.length > 16)
+    {
+      req.flash('error' , 'Invalid Credentials');
+      res.redirect('/login');
+    }
+    else{
+      Account.findOne({username:username},(err,user)=>{
+        if(err)
+        console.log(err);
+        else if(!user)
+        {
+          req.flash('error',`user don't exist`);
+          res.redirect('/login');
+        }
+        else{
+            if(bcrypt.compare(password,user.password))
+            {
+              user.login=1;
+              user.save(err=>{
+                if(err)
+                {
+                  console.log('hello'+err);
+                }
+                // console.log(err);
+                else {
+                  const token = jwt.sign({user:user.username},'secretkey')
+                    console.log(token);
+                    res.cookie('jwt',token,{maxAge:10800000,httpOnly:true});
+                        req.flash('success',`welcome ${username}`);
+                        res.redirect('/home/'+user._id);
+                }
+              })
+            }
+            else {
+              req.flash('error','incorrect password');
+              res.redirect('/login')
+            }
+        }
+      })
+ 
+    }
+
+    
 });
 
 // you ask for the register page
@@ -231,9 +241,15 @@ app.post('/register', (req, res) =>{
     let username = req.body.username;
     let email = req.body.email;
     let password = req.body.password;
-    if(!username || !email || !password)
+
+    if(!username || !email || !password )
     {
       req.flash('error','please fill all fields');
+      res.redirect('/register');
+    }
+    else if(password.length > 16 || password.length < 4)
+    {
+      req.flash('error', 'Invalid password length');
       res.redirect('/register');
     }
     else {
@@ -664,50 +680,51 @@ app.get('/profile/:uid/edit_profile' , (req , res)=>{
 //   Account.findOne({_id:uid})
 // })
 
-app.get('/profile/:uid/edit_profile/edit_username' , (req , res)=>{
-  let uid = req.params.uid;
-  Account.findOne({_id:uid} , (err , user)=>{
-    if(err)
-    console.log(err);
-    else
-    res.render('edit_username', {user:user});
-  })
-})
+// app.get('/profile/:uid/edit_profile/edit_username' , (req , res)=>{
+//   let uid = req.params.uid;
+//   Account.findOne({_id:uid} , (err , user)=>{
+//     if(err)
+//     console.log(err);
+//     else
+//     res.render('edit_username', {user:user});
+//   })
+// })
 
 
-app.post('/profile/:uid/edit_profile/edit_username' , verifyuser,(req , res)=>{
-  let uid = req.params.uid;
-  Account.findOne({_id:uid} , (err , user)=>{
-    if(err)
-    console.log(err);
-    else if(!user)
-    {
-      req.flash('error',`user doesn't exist`);
-      res.redirect('/login');
-    }
-    else if(!user.login || req.user != user.username)
-    {
-      req.flash('error','please login');
-      res.redirect('/login');
-    }
-    else{
-      let username = req.body.username.trim();
-      if(username != user.username && username.length != 0)
-      {
-        user.username = username;
-        user.save((err)=>{
-          if(err)
-          console.log(err);
-          else
-          {
-            req.flash('success' , 'Username updated successfully');
-          }
-        })
-      }
-      res.redirect('/profile/'+uid+'/edit_profile');
-    }
-  })
-})
+// app.post('/profile/:uid/edit_profile/edit_username' , verifyuser,(req , res)=>{
+//   let uid = req.params.uid;
+//   Account.findOne({_id:uid} , (err , user)=>{
+//     if(err)
+//     console.log(err);
+//     else if(!user)
+//     {
+//       req.flash('error',`user doesn't exist`);
+//       res.redirect('/login');
+//     }
+//     else if(!user.login || req.user != user.username)
+//     {
+//       req.flash('error','please login');
+//       res.redirect('/login');
+//     }
+//     else{
+//       let username = req.body.username.trim();
+//       if(username != user.username && username.length != 0)
+//       {
+//         user.username = username;
+//         user.save((err)=>{
+//           if(err)
+//           console.log(err);
+//           else
+//           {
+
+//             req.flash('success' , 'Username updated successfully');
+//           }
+//         })
+//       }
+//       res.redirect('/profile/'+uid+'/edit_profile');
+//     }
+//   })
+// })
 
 app.get('/profile/:uid/edit_profile/edit_password' , (req , res)=>{
   let uid = req.params.uid;
