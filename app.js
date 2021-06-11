@@ -56,8 +56,8 @@ app.get('/' , (req,res)=>{
               console.log(err);
           else {
             //const results = paginatedResults(datas, req);
-            console.log(datas);
-            console.log(typeof(datas));
+            // console.log(datas);
+            // console.log(typeof(datas));
             const check_prev = page > 1;
             const check_next = datas.length >= 10;
             const checks = {
@@ -159,46 +159,6 @@ app.get('/home/:id/:page', (req, res) => {
   })
 });
 
-
-
-/*app.get('/users', (req, res) =>{
-  //results = paginatedResults(users, req);
-  res.json(results);
-});*/
-
-
-
-  /*model.find({}, {skip:startIndex, limit:limit}, (err, datas) => {
-    if(err){
-      console.log(111);
-      console.log(err);
-      result.results = {};
-    }else{
-      result.results = datas;
-    }
-  });
-  return result;
-}*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 app.get('/question/:uid', (req, res) => {
     let uid = req.params.uid;
     Account.findOne({_id:uid},(err,user)=>{
@@ -280,29 +240,6 @@ app.get('/about', (req, res) => {
 app.get('/contact', (req, res) => {
     res.render('contact');
 });
-
-/*app.get('/home/:uid',(req,res)=>{
-  let uid = req.params.uid;
-  Account.findOne({_id:uid},(err,user)=>{
-    if(err)
-    console.log(err);
-    else if(!user)
-    {
-      req.flash('error',`user doesn't exist`);
-      res.redirect('/login');
-    }
-    else {
-      data.find({},(err,datas)=>{
-        if(err)
-        console.log(err);
-        else {
-          res.render('index',{success:req.flash('success'),datas:datas,user:user});
-        }
-      })
-    }
-  })
-})*/
-
 
 
 app.get('/login', (req, res) => {
@@ -770,6 +707,7 @@ app.get('/profile/:uid/My_questions' , (req , res)=>{
           if (err)
               console.log(err);
           else {
+            console.log(datas);
               res.render('my_questions', {datas: datas,user:user,success:req.flash('success')});
           }
       })
@@ -787,12 +725,6 @@ app.get('/profile/:uid/edit_profile' , (req , res)=>{
   })
 })
 
-
-
-// app.post('/profile/:uid/edit_profile/edit_password' , (req , res)=>{
-//   let uid = req.params.uid;
-//   Account.findOne({_id:uid})
-// })
 
 app.get('/profile/:uid/edit_profile/edit_username' , (req , res)=>{
   let uid = req.params.uid;

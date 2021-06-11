@@ -40,6 +40,9 @@ let dataschema = mongoose.Schema({
     no_ques:{
       type : Number
     },
+    uid:{
+      type : String
+    },
     comments : [comment]
 });
 
