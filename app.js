@@ -234,7 +234,12 @@ app.post('/question/:uid',verifyuser, (req, res) => {
 });
 
 app.get('/about', (req, res) => {
-    res.render('about');
+    res.render('about',{user:null});
+});
+
+app.get('/about/:id', async(req, res) => {
+    let user = await  Account.findOne({_id:req.params.id})
+    res.render('about',{user:user});
 });
 
 app.get('/contact', (req, res) => {
